@@ -14,7 +14,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; }
-      body { margin: 0; font-family: 'Baloo 2', system-ui, -apple-system, sans-serif; }
+      html, body {
+        height: 100%;
+        margin: 0;
+        background-color: #140D07;
+        font-family: 'Baloo 2', system-ui, -apple-system, sans-serif;
+        overscroll-behavior: none;
+      }
       button, input, textarea, select { font-family: inherit; }
       #root {
         height: 100dvh;
