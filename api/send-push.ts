@@ -1,16 +1,23 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import * as admin from 'firebase-admin';
+import webPush from 'web-push';
 
-const ONESIGNAL_APP_ID = 'c39d05df-07ac-4315-b489-f13fc9d0b8bb';
-const ONESIGNAL_API_URL = 'https://onesignal.com/api/v1/notifications';
+const VAPID_PUBLIC_KEY = 'BMkWPF3_4FrjVQ1iY9tua6bZ0_8hcZmSxLKQ6yjrXJX1v6En9b_rwqD4H_cE0qPDD4xuJfm952h9V1iF7C_pClQ';
+const VAPID_PRIVATE_KEY = 'KFWNupFphL5lHJXIkvuy5ftvQT0PtBxKAxzRe8blxnM';
+const VAPID_SUBJECT = 'mailto:admin@fontigola.com';
+
+if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
+
+webPush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const apiKey = process.env.ONESIGNAL_REST_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'Missing ONESIGNAL_REST_API_KEY' });
   }
 
   const { title, body, url } = req.body || {};
@@ -19,27 +26,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const response = await fetch(ONESIGNAL_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${apiKey}`,
-      },
-      body: JSON.stringify({
-        app_id: ONESIGNAL_APP_ID,
-        contents: { en: body },
-        headings: { en: title },
-        url: url || '/',
-        included_segments: ['Subscribed Users'],
-      }),
-    });
+    const db = admin.firestore();
+    const snapshot = await db.collection('pushSubscriptions').get();
+    const subscriptions = snapshot.docs.map((d) => d.data());
 
-    const data = await response.json();
-    if (data.id) {
-      return res.status(200).json({ success: true, id: data.id });
-    }
-    return res.status(400).json({ success: false, error: data.errors?.[0] || 'Unknown error' });
+    let success = 0;
+    let failed = 0;
+
+    const results = await Promise.allSettled(
+      subscriptions.map(async (sub) => {
+        try {
+          await webPush.sendNotification(
+            { endpoint: sub.endpoint, keys: sub.keys },
+            JSON.stringify({ title, body, url: url || '/' })
+          );
+          success++;
+        } catch {
+          failed++;
+          if (sub.userId) {
+            await db.collection('pushSubscriptions').doc(sub.userId).delete().catch(() => {});
+          }
+        }
+      })
+    );
+
+    return res.status(200).json({ success, failed, total: subscriptions.length });
   } catch (err) {
-    return res.status(500).json({ success: false, error: String(err) });
+    return res.status(500).json({ error: String(err) });
   }
 }
