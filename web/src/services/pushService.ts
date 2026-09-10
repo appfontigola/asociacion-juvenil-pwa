@@ -1,15 +1,23 @@
-import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { getDb } from './firebase';
+export async function subscribeToPush(): Promise<void> {
+  const w = window as any;
+  if (!w.OneSignal) return;
+  try {
+    await w.OneSignal.registerForPushNotifications();
+  } catch {}
+}
 
-const COLLECTION = 'pushSubscriptions';
+export async function setExternalUserId(userId: string): Promise<void> {
+  const w = window as any;
+  if (!w.OneSignal) return;
+  try {
+    await w.OneSignal.setExternalUserId(userId);
+  } catch {}
+}
 
-export async function subscribeToPush(userId: string): Promise<void> {}
-export async function unsubscribeFromPush(userId: string): Promise<void> {}
-
-export async function sendPushNotification(
-  title: string,
-  body: string,
-  url?: string
-): Promise<{ success: number; failed: number; total: number }> {
-  return { success: 0, failed: 0, total: 0 };
+export async function removeExternalUserId(): Promise<void> {
+  const w = window as any;
+  if (!w.OneSignal) return;
+  try {
+    await w.OneSignal.removeExternalUserId();
+  } catch {}
 }

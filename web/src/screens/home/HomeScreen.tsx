@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { subscribeToPush, isSubscribed } from '../../services/webPushService';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
 
 const pageStyle: React.CSSProperties = {
@@ -109,6 +110,36 @@ const cards = [
 const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
+  const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [pushStatus, setPushStatus] = useState('');
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const hasSW = 'serviceWorker' in navigator;
+    const hasPush = 'PushManager' in window;
+    const perm = 'Notification' in window ? Notification.permission : 'N/A';
+    setPushStatus(`SW:${hasSW} Push:${hasPush} Perm:${perm}`);
+    isSubscribed().then((s) => setSubscribed(s));
+  }, [user?.id]);
+
+  const handleSubscribe = async () => {
+    if (!user?.id) return;
+    setSubscribing(true);
+    setPushStatus('Obteniendo SW...');
+    try {
+      const ok = await subscribeToPush(user.id);
+      if (ok) {
+        setSubscribed(true);
+        setPushStatus('¡Suscrito!');
+      } else {
+        setPushStatus('No se pudo suscribir');
+      }
+    } catch (e: any) {
+      setPushStatus('Error: ' + (e.message || String(e)));
+    }
+    setSubscribing(false);
+  };
 
   const allCards = isAdmin ? [...cards, { label: 'Panel Admin', route: '/admin' }] : cards;
 
@@ -149,6 +180,34 @@ const HomeScreen: React.FC = () => {
             );
           })}
         </div>
+        {!subscribed && (
+          <>
+            <button
+              onClick={handleSubscribe}
+              disabled={subscribing}
+              style={{
+                backgroundColor: '#FF7223',
+                color: '#FEF5E6',
+                border: 'none',
+                borderRadius: borderRadius.md,
+                padding: '14px 28px',
+                fontSize: 16,
+                fontWeight: 600,
+                cursor: 'pointer',
+                width: '100%',
+                marginBottom: spacing.sm,
+                opacity: subscribing ? 0.5 : 1,
+              }}
+            >
+              {subscribing ? '...' : '🔔 Activar notificaciones'}
+            </button>
+            {pushStatus && (
+              <p style={{ color: colors.textSecondary, fontSize: 13, textAlign: 'center', margin: 0, marginBottom: spacing.md }}>
+                {pushStatus}
+              </p>
+            )}
+          </>
+        )}
         <div style={bottomStyle}>
           {user?.displayName} — v1.0.0
         </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
 import Card from '../../components/ui/Card';
+import Avatar from '../../components/ui/Avatar';
 import Loading from '../../components/ui/Loading';
 import { subscribeToKeysLog, KeysLogEntry } from '../../services/localService';
 
@@ -152,11 +153,14 @@ const KeysLogScreen: React.FC = () => {
       ) : (
         entries.map((e) => (
           <Card key={e.id} style={cardStyle}>
-            <div>
-              <div style={nameStyle}>{e.userName}</div>
-              <div style={timeStyle}>
-                Recogida: {formatTime(e.takeTime)}
-                {e.returnTime ? `  ·  Devolución: ${formatTime(e.returnTime)}` : ''}
+            <div style={{ display: 'flex', alignItems: 'center', gap: spacing.md, flex: 1 }}>
+              <Avatar name={e.userName} size={36} photoURL={e.userPhotoURL} />
+              <div>
+                <div style={nameStyle}>{e.userName}</div>
+                <div style={timeStyle}>
+                  Recogida: {formatTime(e.takeTime)}
+                  {e.returnTime ? `  ·  Devolución: ${formatTime(e.returnTime)}` : ''}
+                </div>
               </div>
             </div>
             <span style={badgeStyle(!!e.returnTime)}>

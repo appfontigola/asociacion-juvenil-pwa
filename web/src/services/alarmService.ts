@@ -20,6 +20,7 @@ export interface AlarmLogEntry {
   id: string;
   userId: string;
   userName: string;
+  userPhotoURL?: string;
   action: AlarmAction;
   date: string;
   timestamp: Date;
@@ -45,6 +46,7 @@ const mapAlarmLogDoc = (d: { id: string; data: () => Record<string, unknown> }):
     id: d.id,
     userId: data.userId as string,
     userName: data.userName as string,
+    userPhotoURL: (data.userPhotoURL as string) || undefined,
     action: data.action as AlarmAction,
     date: data.date as string,
     timestamp: (data.timestamp as Timestamp)?.toDate?.() || new Date(),

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
 import Card from '../../components/ui/Card';
+import Avatar from '../../components/ui/Avatar';
 import Loading from '../../components/ui/Loading';
 import { subscribeToAlarmLog, AlarmLogEntry } from '../../services/alarmService';
 
@@ -157,24 +158,27 @@ const AlarmLogScreen: React.FC = () => {
       ) : (
         entries.map((e) => (
           <Card key={e.id} style={cardStyle}>
-            <div style={{ flex: 1 }}>
-              <div style={nameStyle}>{e.userName}</div>
-              <div style={timeStyle}>
-                {formatTime(e.timestamp)} · {e.action === 'activate' ? 'Alarma conectada' : 'Alarma desactivada'}
-              </div>
-              {e.videoUrl && (
-                <a
-                  href={e.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={videoLinkStyle}
-                >
-                  ▶ Ver vídeo{e.videoName ? ` (${e.videoName})` : ''}
-                </a>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', gap: spacing.md }}>
+              <Avatar name={e.userName} size={36} photoURL={e.userPhotoURL} />
+              <div style={{ flex: 1 }}>
+                <div style={nameStyle}>{e.userName}</div>
+                <div style={timeStyle}>
+                  {formatTime(e.timestamp)} · {e.action === 'activate' ? 'Alarma conectada' : 'Alarma desactivada'}
+                </div>
+                {e.videoUrl && (
+                  <a
+                    href={e.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={videoLinkStyle}
+                  >
+                    ▶ Ver vídeo{e.videoName ? ` (${e.videoName})` : ''}
+                  </a>
               )}
               {!e.videoUrl && e.videoName && (
                 <div style={timeStyle}>Vídeo adjunto: {e.videoName}</div>
               )}
+              </div>
             </div>
             <span style={badgeStyle(e.action)}>
               {e.action === 'activate' ? 'Activada' : 'Desactivada'}

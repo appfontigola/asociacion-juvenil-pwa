@@ -1,14 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { changePassword } from '../../services/authService';
-import { updateUser } from '../../services/userService';
+import { updateUser, getUserById } from '../../services/userService';
 import { formatDateTime } from '../../utils/helpers';
 import { colors, spacing, borderRadius, typography, gradients } from '../../constants/theme';
 import Avatar from '../../components/ui/Avatar';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+import ImageCropModal from '../../components/ImageCropModal';
 
 const pageStyle: React.CSSProperties = {
   flex: 1,
@@ -146,23 +147,47 @@ const ProfileScreen: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [savingPassword, setSavingPassword] = useState(false);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [pendingImageSrc, setPendingImageSrc] = useState('');
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (!user?.id) return;
+    getUserById(user.id).then((freshUser) => {
+      if (freshUser?.photoURL) {
+        setPhotoURL(freshUser.photoURL);
+        updateUserInContext({ photoURL: freshUser.photoURL });
+      }
+    }).catch(() => {});
+  }, [user?.id]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPendingImageSrc(reader.result as string);
+      setShowCropModal(true);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
 
+  const handleCropConfirm = async (croppedDataUrl: string) => {
+    if (!user) return;
+    setShowCropModal(false);
+    setPendingImageSrc('');
     try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const dataUrl = reader.result as string;
-        setPhotoURL(dataUrl);
-        await updateUser(user.id, { photoURL: dataUrl });
-        updateUserInContext({ photoURL: dataUrl });
-      };
-      reader.readAsDataURL(file);
+      setPhotoURL(croppedDataUrl);
+      await updateUser(user.id, { photoURL: croppedDataUrl });
+      updateUserInContext({ photoURL: croppedDataUrl });
     } catch {
-      window.alert('Error al cargar la imagen');
+      window.alert('Error al guardar la imagen');
     }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropModal(false);
+    setPendingImageSrc('');
   };
 
   const handleChangePassword = async () => {
@@ -319,6 +344,13 @@ const ProfileScreen: React.FC = () => {
           Desarrollado por JC =) · v1.0.0
         </p>
       </div>
+      {showCropModal && pendingImageSrc && (
+        <ImageCropModal
+          imageSrc={pendingImageSrc}
+          onCrop={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 };

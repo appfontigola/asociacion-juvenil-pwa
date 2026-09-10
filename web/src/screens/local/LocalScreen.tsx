@@ -120,6 +120,7 @@ const LocalScreen: React.FC = () => {
 
   const currentUserId = user?.id;
   const currentUserName = user?.displayName || '';
+  const currentPhotoURL = user?.photoURL;
 
   const isInLocal = activeUsers.some((u) => u.userId === currentUserId);
   const hasKeys = keyHolders.some((u) => u.userId === currentUserId);
@@ -132,7 +133,7 @@ const LocalScreen: React.FC = () => {
     if (isInLocal) {
       setAlarmAction('activate');
     } else {
-      enterLocal(currentUserId, currentUserName);
+      enterLocal(currentUserId, currentUserName, currentPhotoURL);
     }
   };
 
@@ -162,6 +163,7 @@ const LocalScreen: React.FC = () => {
       await addAlarmLogEntry({
         userId: currentUserId,
         userName: currentUserName,
+        userPhotoURL: currentPhotoURL,
         action: 'activate',
         videoName: video?.name,
         videoUrl,
@@ -177,7 +179,7 @@ const LocalScreen: React.FC = () => {
     if (hasKeys) {
       returnKeys(currentUserId);
     } else {
-      takeKeys(currentUserId, currentUserName);
+      takeKeys(currentUserId, currentUserName, currentPhotoURL);
     }
   };
 

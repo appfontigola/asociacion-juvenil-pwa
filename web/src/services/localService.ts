@@ -22,17 +22,19 @@ const COLLECTION = 'localPresence';
 export const setUserPresence = async (
   userId: string,
   userName: string,
-  active: boolean
+  active: boolean,
+  userPhotoURL?: string
 ): Promise<void> => {
   const db = getDb();
   const presenceRef = doc(db, COLLECTION, userId);
   const today = new Date().toISOString().split('T')[0];
 
   if (active) {
-    await setDoc(presenceRef, { userId, userName, entryTime: new Date(), active: true });
+    await setDoc(presenceRef, { userId, userName, userPhotoURL: userPhotoURL || null, entryTime: new Date(), active: true });
     await addDoc(collection(db, 'localLog'), {
       userId,
       userName,
+      userPhotoURL: userPhotoURL || null,
       date: today,
       entryTime: new Date(),
       exitTime: null,
@@ -43,7 +45,6 @@ export const setUserPresence = async (
       query(
         collection(db, 'localLog'),
         where('userId', '==', userId),
-        where('date', '==', today),
         where('exitTime', '==', null),
         limit(1)
       )
@@ -81,6 +82,7 @@ export const subscribeToPresence = (
     const users: LocalPresence[] = snapshot.docs.map((d) => ({
       userId: d.id,
       userName: d.data().userName as string,
+      userPhotoURL: (d.data().userPhotoURL as string) || undefined,
       entryTime: (d.data().entryTime as Timestamp)?.toDate?.() || new Date(),
       active: d.data().active as boolean,
     }));
@@ -92,6 +94,7 @@ export interface LocalLogEntry {
   id: string;
   userId: string;
   userName: string;
+  userPhotoURL?: string;
   date: string;
   entryTime?: Date;
   exitTime?: Date;
@@ -103,6 +106,7 @@ const mapLogDoc = (d: { id: string; data: () => Record<string, unknown> }): Loca
     id: d.id,
     userId: data.userId as string,
     userName: data.userName as string,
+    userPhotoURL: (data.userPhotoURL as string) || undefined,
     date: data.date as string,
     entryTime: (data.entryTime as Timestamp)?.toDate?.() || undefined,
     exitTime: (data.exitTime as Timestamp)?.toDate?.() || undefined,
@@ -128,22 +132,43 @@ export const subscribeToLocalLog = (
   });
 };
 
+export const subscribeToLocalLogByUser = (
+  userId: string,
+  startDate: string,
+  endDate: string,
+  callback: (entries: LocalLogEntry[]) => void
+): Unsubscribe => {
+  const db = getDb();
+  const q = query(
+    collection(db, 'localLog'),
+    where('userId', '==', userId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const all = snapshot.docs.map(mapLogDoc).filter(
+      (e) => e.date >= startDate && e.date < endDate
+    );
+    callback(all);
+  });
+};
+
 const KEYS_COLLECTION = 'localKeys';
 
 export const setUserKeyStatus = async (
   userId: string,
   userName: string,
-  hasKeys: boolean
+  hasKeys: boolean,
+  userPhotoURL?: string
 ): Promise<void> => {
   const db = getDb();
   const docRef = doc(db, KEYS_COLLECTION, userId);
   const today = new Date().toISOString().split('T')[0];
 
   if (hasKeys) {
-    await setDoc(docRef, { userId, userName, entryTime: new Date(), active: true });
+    await setDoc(docRef, { userId, userName, userPhotoURL: userPhotoURL || null, entryTime: new Date(), active: true });
     await addDoc(collection(db, 'keysLog'), {
       userId,
       userName,
+      userPhotoURL: userPhotoURL || null,
       date: today,
       takeTime: new Date(),
       returnTime: null,
@@ -154,7 +179,6 @@ export const setUserKeyStatus = async (
       query(
         collection(db, 'keysLog'),
         where('userId', '==', userId),
-        where('date', '==', today),
         where('returnTime', '==', null),
         limit(1)
       )
@@ -169,6 +193,7 @@ export interface KeysLogEntry {
   id: string;
   userId: string;
   userName: string;
+  userPhotoURL?: string;
   date: string;
   takeTime?: Date;
   returnTime?: Date;
@@ -180,6 +205,7 @@ const mapKeysLogDoc = (d: { id: string; data: () => Record<string, unknown> }): 
     id: d.id,
     userId: data.userId as string,
     userName: data.userName as string,
+    userPhotoURL: (data.userPhotoURL as string) || undefined,
     date: data.date as string,
     takeTime: (data.takeTime as Timestamp)?.toDate?.() || undefined,
     returnTime: (data.returnTime as Timestamp)?.toDate?.() || undefined,

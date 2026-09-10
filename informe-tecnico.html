@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Informe Técnico - App Asociación Juvenil</title>
+<style>
+  @page { margin: 2cm; }
+  @media print { .no-print { display: none !important; } body { font-size: 11pt; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1a1a2e; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 28px; color: #0B151D; border-bottom: 3px solid #FF7223; padding-bottom: 10px; margin-bottom: 30px; }
+  h2 { font-size: 20px; color: #FF7223; margin-top: 35px; margin-bottom: 15px; border-left: 4px solid #FF7223; padding-left: 12px; }
+  h3 { font-size: 16px; color: #0B151D; margin-top: 20px; margin-bottom: 10px; }
+  p { margin-bottom: 10px; }
+  .header { text-align: center; margin-bottom: 40px; padding: 30px; background: linear-gradient(135deg, #0B151D 0%, #1a2a3a 100%); color: #FEF5E6; border-radius: 16px; }
+  .header h1 { color: #FEF5E6; border-bottom-color: #FF7223; font-size: 32px; }
+  .header .subtitle { color: #FF7223; font-size: 14px; margin-top: 8px; }
+  .header .date { color: rgba(254,245,230,0.6); font-size: 12px; margin-top: 5px; }
+  .section { margin-bottom: 25px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #0B151D; color: #FEF5E6; padding: 10px 12px; text-align: left; font-weight: 600; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #fff3e0; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-primary { background: #FF7223; color: white; }
+  .badge-success { background: #02AF77; color: white; }
+  .badge-info { background: #4E8ABC; color: white; }
+  .badge-warning { background: #FEBE0F; color: #0B151D; }
+  .badge-pink { background: #FFA4BF; color: #0B151D; }
+  .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+  .tech-card { background: #f8f9fa; border-radius: 10px; padding: 15px; border: 1px solid #e0e0e0; }
+  .tech-card h4 { font-size: 13px; color: #FF7223; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tech-card p { font-size: 13px; color: #555; }
+  .route-path { font-family: 'Courier New', monospace; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .feature-list { list-style: none; padding: 0; }
+  .feature-list li { padding: 6px 0; padding-left: 20px; position: relative; font-size: 14px; }
+  .feature-list li::before { content: '▸'; position: absolute; left: 0; color: #FF7223; font-weight: bold; }
+  .color-swatch { display: inline-block; width: 20px; height: 20px; border-radius: 50%; vertical-align: middle; margin-right: 6px; border: 2px solid #ddd; }
+  .print-btn { position: fixed; bottom: 20px; right: 20px; background: #FF7223; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,114,35,0.4); z-index: 100; }
+  .print-btn:hover { background: #e6621f; }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+
+<div class="header">
+  <h1>Informe Técnico</h1>
+  <div class="subtitle">Aplicación PWA — Asociación Juvenil</div>
+  <div class="date">Generado: 25 de agosto de 2026</div>
+</div>
+
+<!-- 1. RESUMEN EJECUTIVO -->
+<h2>1. Resumen Ejecutivo</h2>
+<div class="section">
+  <p>Aplicación web progresiva (PWA) diseñada para la gestión integral de una asociación juvenil. Permite a los miembros consultar avisos, eventos, gestión del local físico, y notificaciones push. Incluye un panel de administración completo para la gestión de usuarios, contenido y pagos.</p>
+  <div class="tech-grid">
+    <div class="tech-card"><h4>Plataforma</h4><p>PWA (Progressive Web App) — instalable en iOS y Android</p></div>
+    <div class="tech-card"><h4>Frontend</h4><p>React 18 + TypeScript + React Router v6</p></div>
+    <div class="tech-card"><h4>Backend</h4><p>Firebase (Firestore + Auth) — sin servidor propio para datos</p></div>
+    <div class="tech-card"><h4>API Serverless</h4><p>Vercel Functions (Node.js) — notificaciones push y gestión de usuarios</p></div>
+    <div class="tech-card"><h4>Almacenamiento</h4><p>Dropbox OAuth2 para grabaciones de video</p></div>
+    <div class="tech-card"><h4>Despliegue</h4><p>GitHub Pages (frontend) + Vercel (API)</p></div>
+  </div>
+</div>
+
+<!-- 2. ARQUITECTURA TÉCNICA -->
+<h2>2. Arquitectura Técnica</h2>
+<div class="section">
+  <h3>Stack tecnológico</h3>
+  <table>
+    <tr><th>Capa</th><th>Tecnología</th><th>Descripción</th></tr>
+    <tr><td>UI Framework</td><td>React 18</td><td>SPA con renderizado en cliente</td></tr>
+    <tr><td>Routing</td><td>React Router v6</td><td>30 rutas definidas, rutas protegidas</td></tr>
+    <tr><td>Estilos</td><td>Inline Styles + CSS Keyframes</td><td>Paleta Pantone estricta, gradientes, animaciones</td></tr>
+    <tr><td>Fuente</td><td>Baloo 2 (Google Fonts)</td><td>Tipografía juvenil y moderna</td></tr>
+    <tr><td>Autenticación</td><td>Firebase Auth (REST API)</td><td>Login con email/password, JWT tokens</td></tr>
+    <tr><td>Base de datos</td><td>Cloud Firestore</td><td>NoSQL en tiempo real, 12 colecciones</td></tr>
+    <tr><td>PWA</td><td>Service Worker (JS estático)</td><td>Instalable, offline-capable</td></tr>
+    <tr><td>Notificaciones</td><td>Web Push API (VAPID)</td><td>Push nativo sin servidor propio</td></tr>
+    <tr><td>API</td><td>Vercel Serverless Functions</td><td>Endpoints: send-push, delete-user</td></tr>
+    <tr><td>Almacenamiento</td><td>Dropbox OAuth2 (PKCE)</td><td>Videos de alarma en la nube</td></tr>
+    <tr><td>Despliegue</td><td>GitHub Pages + Vercel</td><td>CI/CD automático via git push</td></tr>
+  </table>
+
+  <h3>Colecciones Firestore</h3>
+  <table>
+    <tr><th>Colección</th><th>Campos principales</th><th>Uso</th></tr>
+    <tr><td><code>users</code></td><td>email, displayName, role, active, photoURL</td><td>Perfiles de usuario y permisos</td></tr>
+    <tr><td><code>notices</code></td><td>title, description, authorId, authorName</td><td>Avisos/noticias de la asociación</td></tr>
+    <tr><td><code>events</code></td><td>title, description, date, time, location</td><td>Eventos del calendario</td></tr>
+    <tr><td><code>attendance</code></td><td>userId, eventId, status</td><td>Confirmación de asistencia a eventos</td></tr>
+    <tr><td><code>localPresence</code></td><td>userId, displayName, checkIn, checkOut</td><td>Registro de presencia en el local</td></tr>
+    <tr><td><code>keysLog</code></td><td>userId, action, timestamp</td><td>Registro de préstamo/devolución de llaves</td></tr>
+    <tr><td><code>alarmLog</code></td><td>userId, action, videoUrl, timestamp</td><td>Registro de activaciones de alarma</td></tr>
+    <tr><td><code>payments</code></td><td>userId, year, paid</td><td>Control de cuotas anuales</td></tr>
+    <tr><td><code>pushSubscriptions</code></td><td>userId, endpoint, keys</td><td>Suscripciones push por dispositivo</td></tr>
+    <tr><td><code>userBadges</code></td><td>userId, lastNoticesSeen, lastEventsSeen</td><td>Contadores de badges no leídos</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 3. FUNCIONALIDADES POR MÓDULO -->
+<h2>3. Funcionalidades por Módulo</h2>
+
+<h3>3.1 Autenticación</h3>
+<div class="section">
+  <ul class="feature-list">
+    <li>Login con email y contraseña via Firebase Auth REST API</li>
+    <li>Sesión persistente en localStorage</li>
+    <li>Redirección automática al iniciar sesión si ya hay sesión activa</li>
+    <li>Recuperación de contraseña por email</li>
+    <li>Rol de usuario: <span class="badge badge-primary">admin</span> o <span class="badge badge-info">usuario</span></li>
+    <li>Usuarios pueden ser desactivados por admin (no pueden iniciar sesión)</li>
+    <li>Cierre de sesión con limpieza de estado</li>
+  </ul>
+</div>
+
+<h3>3.2 Pantalla Principal (Home)</h3>
+<div class="section">
+  <ul class="feature-list">
+    <li>Saludo personalizado con nombre del usuario</li>
+    <li>Grid de navegación con 5 tarjetas de acceso rápido con gradientes</li>
+    <li>Indicadores de badges (elementos no leídos) en Avisos y Calendario</li>
+    <li>Botón de activación de notificaciones push</li>
+    <li>Acceso al Panel de Administrador (solo para rol admin)</li>
+    <li>Animaciones pop-in escalonadas y efectos hover</li>
+  </ul>
+</div>
+
+<h3>3.3 Módulo de Avisos</h3>
+<div class="section">
+  <ul class="feature-list">
+    <li>Lista de todos los avisos ordenados por fecha de creación (más recientes primero)</li>
+    <li>Vista detallada de cada aviso con autor, fecha y contenido completo</li>
+    <li>Creación de avisos con título y descripción (solo admin)</li>
+    <li>Edición de avisos existentes (solo admin)</li>
+    <li>Eliminación de avisos (solo admin)</li>
+    <li>Envío automático de notificación push al crear un aviso</li>
+    <li>Badge de "no leído" en la pestaña de Avisos</li>
+    <li>El badge se marca como visto al entrar a la pantalla</li>
+  </ul>
+</div>
+
+<h3>3.4 Módulo de Calendario / Eventos</h3>
+<div class="section">
+  <ul class="feature-list">
+    <li>Vista de calendario mensual con cuadrícula interactiva</li>
+    <li>Puntos indicadores en días con eventos</li>
+    <li>Selección de día para ver eventos programados</li>
+    <li>Vista detallada del evento con fecha, hora, ubicación y descripción</li>
+    <li>Sistema de asistencia: <span class="badge badge-success">Asistiré</span> / <span class="badge badge-pink">No asistiré</span></li>
+    <li>Conteo de asistentes y no asistentes</li>
+    <li>Avatares de asistentes</li>
+    <li>Creación y edición de eventos (solo admin)</li>
+    <li>Badge de "eventos nuevos" en la pestaña</li>
+  </ul>
+</div>
+
+<h3>3.5 Módulo del Local</h3>
+<div class="section">
+  <ul class="feature-list">
+    <li>Presencia en tiempo real: quién está en el local</li>
+    <li>Sistema de check-in / check-out con registro horario</li>
+    <li>Check-in automático via parámetros URL (<code>?checkin</code> / <code>?checkout</code>)</li>
+    <li>Estado de llaves: disponibles o prestadas</li>
+    <li>Registro de préstamo/devolución de llaves</li>
+    <li>Sistema de alarma con activación/desactivación</li>
+    <li>Grabación de video al activar alarma (si Dropbox conectado)</li>
+    <li>Upload automático de video a Dropbox</li>
+    <li>Log de alarma en tiempo real para admin</li>
+  </ul>
+</div>
+
+<h3>3.6 Perfil de Usuario</h3>
+<div class="section">
+  <ul class="feature-list">
+    <li>Visualización de avatar, nombre, email y rol</li>
+    <li>Badge de rol (<span class="badge badge-primary">Administrador</span> / <span class="badge badge-info">Usuario</span>)</li>
+    <li>Fecha de registro</li>
+    <li>Edición de nombre y foto de perfil</li>
+    <li>Cambio de contraseña</li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 4. PANEL DE ADMINISTRACIÓN -->
+<h2>4. Panel de Administración</h2>
+<div class="section">
+  <p>Accesible solo para usuarios con rol <code>admin</code>. Contiene 12 pantallas de gestión:</p>
+
+  <table>
+    <tr><th>Pantalla</th><th>Funcionalidad</th></tr>
+    <tr>
+      <td><strong>Gestionar Usuarios</strong><br><span class="route-path">/admin/users</span></td>
+      <td>Listar todos los usuarios con avatar, rol y estado. Botones para editar, activar/desactivar y <strong>eliminar</strong> usuario (borrado de Auth + Firestore). Botón para crear nuevos usuarios.</td>
+    </tr>
+    <tr>
+      <td><strong>Crear Usuario</strong><br><span class="route-path">/admin/create-user</span></td>
+      <td>Formulario con nombre, email, contraseña y rol. Crea usuario en Firebase Auth y documento en Firestore.</td>
+    </tr>
+    <tr>
+      <td><strong>Editar Usuario</strong><br><span class="route-path">/admin/edit-user/:id</span></td>
+      <td>Modificar nombre, rol y estado. Envío de email de restablecimiento de contraseña.</td>
+    </tr>
+    <tr>
+      <td><strong>Gestionar Avisos</strong><br><span class="route-path">/admin/notices</span></td>
+      <td>CRUD completo de avisos: listar, crear, editar, eliminar.</td>
+    </tr>
+    <tr>
+      <td><strong>Gestionar Eventos</strong><br><span class="route-path">/admin/events</span></td>
+      <td>CRUD completo de eventos: listar, crear, editar, eliminar.</td>
+    </tr>
+    <tr>
+      <td><strong>Overview de Asistencia</strong><br><span class="route-path">/admin/attendance</span></td>
+      <td>Estadísticas de asistencia por usuario: asistirá, no asistirá, sin respuesta. Datos aggregados de todos los eventos.</td>
+    </tr>
+    <tr>
+      <td><strong>Gestión de Pagos</strong><br><span class="route-path">/admin/payments</span></td>
+      <td>Control de cuotas anuales por usuario. Toggle de estado pagado/pendiente. Vista anual.</td>
+    </tr>
+    <tr>
+      <td><strong>Código QR</strong><br><span class="route-path">/admin/qr</span></td>
+      <td>Generación de códigos QR para check-in/check-out del local. Toggle entre tipos de QR.</td>
+    </tr>
+    <tr>
+      <td><strong>Log de Presencia</strong><br><span class="route-path">/admin/local-log</span></td>
+      <td>Registro en tiempo real de entradas/salidas del local.</td>
+    </tr>
+    <tr>
+      <td><strong>Log de Llaves</strong><br><span class="route-path">/admin/keys-log</span></td>
+      <td>Registro en tiempo real de préstamos/devoluciones de llaves.</td>
+    </tr>
+    <tr>
+      <td><strong>Log de Alarma</strong><br><span class="route-path">/admin/alarm-log</span></td>
+      <td>Registro en tiempo real de activaciones/desactivaciones de alarma con referencia a video.</td>
+    </tr>
+    <tr>
+      <td><strong>Conectar Dropbox</strong><br><span class="route-path">/admin/dropbox</span></td>
+      <td>Gestión de la conexión OAuth2 con Dropbox para almacenamiento de videos de alarma.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 5. NOTIFICACIONES PUSH -->
+<h2>5. Sistema de Notificaciones Push</h2>
+<div class="section">
+  <h3>Arquitectura</h3>
+  <table>
+    <tr><th>Componente</th><th>Descripción</th></tr>
+    <tr><td>Suscripción</td><td>Web Push API con VAPID keys. Suscripción almacenada en Firestore <code>pushSubscriptions</code></td></tr>
+    <tr><td>Envío</td><td>Vercel Serverless Function (<code>/api/send-push</code>) lee suscripciones y envía via web-push</td></tr>
+    <tr><td>Recepción</td><td>Service Worker estático maneja eventos <code>push</code> y <code>notificationclick</code></td></tr>
+    <tr><td>Trigger</td><td>Automático al crear un aviso nuevo</td></tr>
+  </table>
+
+  <h3>Flujo completo</h3>
+  <ol style="padding-left: 20px; margin: 10px 0;">
+    <li>Usuario pulsa "Activar notificaciones" →浏览器 solicita permiso</li>
+    <li>Si permiso concedido →浏览器 genera suscripción push</li>
+    <li>Suscripción guardada en Firestore con <code>userId</code> como ID del documento</li>
+    <li>Al crear aviso → frontend llama a <code>/api/send-push</code></li>
+    <li>Vercel function lee todas las suscripciones de Firestore</li>
+    <li>Envía push a cada suscripción via VAPID</li>
+    <li>Service Worker recibe evento <code>push</code> → muestra notificación nativa</li>
+  </ol>
+
+  <h3>Comportamiento por dispositivo</h3>
+  <p>La suscripción está vinculada al <strong>dispositivo/navegador</strong>, no al usuario. Si un usuario activa notificaciones y luego cambia de cuenta, las notificaciones siguen llegando al dispositivo.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 6. PWA -->
+<h2>6. Progressive Web App (PWA)</h2>
+<div class="section">
+  <ul class="feature-list">
+    <li><strong>Instalable</strong>: se puede instalar en pantalla de inicio (iOS/Android)</li>
+    <li><strong>Standalone mode</strong>: se ejecuta como app independiente sin barra de navegador</li>
+    <li><strong>Service Worker</strong>: JavaScript estático (compatible iOS Safari)</li>
+    <li><strong>Manifest</strong>: manifest.webmanifest con nombre, iconos, colores y scope</li>
+    <li><strong>Iconos</strong>: 192x192 y 512x512 (normal + maskable)</li>
+    <li><strong>Theme color</strong>: #0B151D (dark navy)</li>
+    <li><strong>Background color</strong>: #0B151D</li>
+    <li><strong>Orientación</strong>: portrait (vertical)</li>
+    <li><strong>Safe areas</strong>: soporte para notch (env safe-area-inset)</li>
+    <li><strong>Overscroll behavior</strong>: deshabilitado para experiencia nativa</li>
+    <li><strong>Viewport</strong>: maximum-scale=1.0, user-scalable=no</li>
+  </ul>
+</div>
+
+<!-- 7. DISEÑO -->
+<h2>7. Sistema de Diseño</h2>
+<div class="section">
+  <h3>Paleta de colores Pantone</h3>
+  <table>
+    <tr><th>Color</th><th>Hex</th><th>Uso</th></tr>
+    <tr><td><span class="color-swatch" style="background:#FEBE0F"></span>Yellow</td><td>#FEBE0F</td><td>Acentos, bordes, gradientes</td></tr>
+    <tr><td><span class="color-swatch" style="background:#FFA4BF"></span>Pink</td><td>#FFA4BF</td><td>Gradiente secundario, acentos suaves</td></tr>
+    <tr><td><span class="color-swatch" style="background:#FF7223"></span>Orange</td><td>#FF7223</td><td>Color primario, botones, links</td></tr>
+    <tr><td><span class="color-swatch" style="background:#02AF77"></span>Green</td><td>#02AF77</td><td>Éxito, estados activos, confirmación</td></tr>
+    <tr><td><span class="color-swatch" style="background:#4E8ABC"></span>Blue</td><td>#4E8ABC</td><td>Informativo, badges secundarios</td></tr>
+    <tr><td><span class="color-swatch" style="background:#FEF5E6"></span>Cream</td><td>#FEF5E6</td><td>Texto principal, fondo claro</td></tr>
+    <tr><td><span class="color-swatch" style="background:#0B151D"></span>Dark Navy</td><td>#0B151D</td><td>Fondo principal, texto oscuro</td></tr>
+  </table>
+
+  <h3>Elementos de UI</h3>
+  <ul class="feature-list">
+    <li><strong>Títulos</strong>: Gradientes de texto (yellow → orange → pink)</li>
+    <li><strong>Tarjetas</strong>: Gradient backgrounds, border-radius: 16px, box-shadow</li>
+    <li><strong>Tab bar</strong>: Flotante, position: fixed, border-radius: 22px, gradient background</li>
+    <li><strong>Botón activo</strong>: Gradiente pill con sombra</li>
+    <li><strong>Animaciones</strong>: popIn (aparecer), floaty (flotar), shimmer (brillo)</li>
+    <li><strong>Badges</strong>: Indicadores de badges no leídos en pestañas</li>
+    <li><strong>Transiciones</strong>: hover effects en tarjetas y botones</li>
+  </ul>
+</div>
+
+<!-- 8. SERVIDOR API -->
+<h2>8. API Serverless (Vercel)</h2>
+<div class="section">
+  <table>
+    <tr><th>Endpoint</th><th>Método</th><th>Función</th></tr>
+    <tr>
+      <td><span class="route-path">/api/send-push</span></td>
+      <td>POST</td>
+      <td>Envía notificación push a todas las suscripciones. Body: <code>{title, body, url}</code>. Lee suscripciones de Firestore, envía via web-push con VAPID.</td>
+    </tr>
+    <tr>
+      <td><span class="route-path">/api/delete-user</span></td>
+      <td>POST</td>
+      <td>Elimina usuario de Firebase Auth y Firestore. Body: <code>{userId}</code>. Usa Firebase Admin SDK.</td>
+    </tr>
+  </table>
+  <p style="margin-top:10px;">Ambas funciones incluyen headers CORS para permitir llamadas desde GitHub Pages.</p>
+</div>
+
+<!-- 9. SERVICIOS EXTERNOS -->
+<h2>9. Integraciones Externas</h2>
+<div class="section">
+  <table>
+    <tr><th>Servicio</th><th>Uso</th><th>Método</th></tr>
+    <tr><td>Firebase Auth</td><td>Autenticación de usuarios</td><td>REST API + Admin SDK</td></tr>
+    <tr><td>Cloud Firestore</td><td>Base de datos principal</td><td>Firebase JS SDK</td></tr>
+    <tr><td>Vercel</td><td>Hosting de API serverless</td><td>Node.js Functions</td></tr>
+    <tr><td>GitHub Pages</td><td>Hosting del frontend PWA</td><td>Static hosting</td></tr>
+    <tr><td>Dropbox</td><td>Almacenamiento de videos de alarma</td><td>OAuth2 PKCE</td></tr>
+    <tr><td>Google Fonts</td><td>Fuente Baloo 2</td><td>CDN</td></tr>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 10. ESTRUCTURA DE ARCHIVOS -->
+<h2>10. Estructura del Proyecto</h2>
+<div class="section">
+  <table>
+    <tr><th>Ruta</th><th>Descripción</th></tr>
+    <tr><td><code>web/</code></td><td>Fuente de la aplicación React</td></tr>
+    <tr><td><code>web/src/screens/</code></td><td>24 pantallas organizadas por módulo</td></tr>
+    <tr><td><code>web/src/services/</code></td><td>15 servicios (CRUD, auth, push, dropbox)</td></tr>
+    <tr><td><code>web/src/hooks/</code></td><td>Custom hooks (useAuth, useNotices, useLocalPresence...)</td></tr>
+    <tr><td><code>web/src/contexts/</code></td><td>React Contexts (AuthContext, BadgesContext)</td></tr>
+    <tr><td><code>web/src/components/</code></td><td>Componentes reutilizables (Avatar, Badge, Input, Loading, EmptyState)</td></tr>
+    <tr><td><code>web/src/constants/</code></td><td>Theme (colores, tipografía, gradientes)</td></tr>
+    <tr><td><code>web/src/config/</code></td><td>Configuración Firebase, VAPID, OneSignal</td></tr>
+    <tr><td><code>web/public/sw.js</code></td><td>Service Worker estático (push, notificationclick)</td></tr>
+    <tr><td><code>web/public/manifest.webmanifest</code></td><td>Manifest PWA</td></tr>
+    <tr><td><code>api/send-push.ts</code></td><td>Función serverless para push notifications</td></tr>
+    <tr><td><code>api/delete-user.ts</code></td><td>Función serverless para eliminación de usuarios</td></tr>
+    <tr><td><code>api/package.json</code></td><td>Dependencias de las funciones serverless</td></tr>
+    <tr><td><code>firestore.rules</code></td><td>Reglas de seguridad de Firestore</td></tr>
+  </table>
+</div>
+
+<!-- 11. RUTAS -->
+<h2>11. Rutas de la Aplicación</h2>
+<div class="section">
+  <table>
+    <tr><th>Ruta</th><th>Pantalla</th><th>Acceso</th></tr>
+    <tr><td><span class="route-path">/login</span></td><td>LoginScreen</td><td>Público</td></tr>
+    <tr><td><span class="route-path">/</span></td><td>HomeScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/notices</span></td><td>NoticesListScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/notices/create</span></td><td>CreateNoticeScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/notices/edit/:id</span></td><td>EditNoticeScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/notices/detail/:id</span></td><td>NoticeDetailScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/calendar</span></td><td>CalendarScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/calendar/create</span></td><td>CreateEventScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/calendar/edit/:id</span></td><td>EditEventScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/calendar/event/:id</span></td><td>EventDetailScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/local</span></td><td>LocalScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/profile</span></td><td>ProfileScreen</td><td>Autenticado</td></tr>
+    <tr><td><span class="route-path">/admin</span></td><td>AdminPanelScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/users</span></td><td>ManageUsersScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/create-user</span></td><td>CreateUserScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/edit-user/:id</span></td><td>EditUserScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/notices</span></td><td>ManageNoticesScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/events</span></td><td>ManageEventsScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/attendance</span></td><td>AttendanceOverviewScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/payments</span></td><td>PaymentsScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/qr</span></td><td>QRScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/local-log</span></td><td>LocalLogScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/keys-log</span></td><td>KeysLogScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/alarm-log</span></td><td>AlarmLogScreen</td><td>Admin</td></tr>
+    <tr><td><span class="route-path">/admin/dropbox</span></td><td>DropboxConnectScreen</td><td>Admin</td></tr>
+  </table>
+</div>
+
+<!-- 12. SEGURIDAD -->
+<h2>12. Seguridad</h2>
+<div class="section">
+  <ul class="feature-list">
+    <li><strong>Autenticación</strong>: Firebase Auth con tokens JWT</li>
+    <li><strong>Rutas protegidas</strong>: Todas las rutas excepto <code>/login</code> requieren autenticación</li>
+    <li><strong>Control de acceso</strong>: Funcionalidades de admin restringidas por rol</li>
+    <li><strong>Firestore Rules</strong>: Reglas de seguridad en cada colección</li>
+    <li><strong>API Keys</strong>: Variables de entorno en Vercel (no expuestas en frontend)</li>
+    <li><strong>CORS</strong>: Headers configurados en funciones serverless</li>
+    <li><strong>VAPID Keys</strong>: Claves VAPID para notificaciones push seguras</li>
+  </ul>
+</div>
+
+<!-- 13. ESTADÍSTICAS -->
+<h2>13. Estadísticas del Proyecto</h2>
+<div class="section">
+  <div class="tech-grid">
+    <div class="tech-card"><h4>Pantallas</h4><p>24 archivos de pantalla</p></div>
+    <div class="tech-card"><h4>Servicios</h4><p>15 servicios (CRUD, auth, push, dropbox)</p></div>
+    <div class="tech-card"><h4>Rutas</h3><p>30 rutas definidas</p></div>
+    <div class="tech-card"><h4>Funciones API</h4><p>2 serverless functions</p></div>
+    <div class="tech-card"><h4>Colecciones Firestore</h4><p>12 colecciones</p></div>
+    <div class="tech-card"><h4>Componentes UI</h4><p>5+ componentes reutilizables</p></div>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 50px; padding: 20px; color: #999; font-size: 12px;">
+  <p>Informe generado automáticamente — Asociación Juvenil PWA v1.0.0</p>
+  <p>https://appfontigola.github.io/asociacion-juvenil-pwa/</p>
+</div>
+
+</body>
+</html>

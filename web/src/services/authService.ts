@@ -48,6 +48,7 @@ export const loginWithEmail = async (
     displayName: rawData.displayName as string,
     role: rawData.role as 'admin' | 'user',
     active: rawData.active as boolean,
+    photoURL: rawData.photoURL as string | undefined,
     createdAt: (rawData.createdAt as any)?.toDate?.() || new Date(),
     updatedAt: (rawData.updatedAt as any)?.toDate?.() || new Date(),
   };

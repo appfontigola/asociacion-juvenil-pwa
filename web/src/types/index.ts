@@ -50,6 +50,7 @@ export interface EventAttendance {
 export interface LocalPresence {
   userId: string;
   userName: string;
+  userPhotoURL?: string;
   entryTime: Date;
   active: boolean;
 }

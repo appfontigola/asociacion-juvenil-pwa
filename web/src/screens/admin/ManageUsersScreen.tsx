@@ -90,12 +90,6 @@ const userNameStyle: React.CSSProperties = {
   margin: 0,
 };
 
-const userEmailStyle: React.CSSProperties = {
-  fontSize: 13,
-  color: colors.textSecondary,
-  margin: 0,
-};
-
 const badgesStyle: React.CSSProperties = {
   display: 'flex',
   gap: spacing.xs,
@@ -152,6 +146,16 @@ const ManageUsersScreen: React.FC = () => {
     }
   };
 
+  const handleDelete = async (u: AppUser) => {
+    if (!confirm(`¿Eliminar a ${u.displayName}? Esta acción no se puede deshacer.`)) return;
+    try {
+      await userService.deleteUser(u.id);
+      setUsers((prev) => prev.filter((x) => x.id !== u.id));
+    } catch (e: any) {
+      alert('Error: ' + (e.message || String(e)));
+    }
+  };
+
   return (
     <div style={pageStyle}>
       <div style={topBarStyle}>
@@ -172,10 +176,9 @@ const ManageUsersScreen: React.FC = () => {
         ) : (
           users.map((u) => (
             <div key={u.id} style={userCardStyle}>
-              <Avatar name={u.displayName} size={44} />
+              <Avatar name={u.displayName} size={44} photoURL={u.photoURL} />
               <div style={userInfoStyle}>
                 <p style={userNameStyle}>{u.displayName}</p>
-                <p style={userEmailStyle}>{u.email}</p>
                 <div style={badgesStyle}>
                   <Badge
                     label={u.role === 'admin' ? 'Administrador' : 'Usuario'}
@@ -207,6 +210,18 @@ const ManageUsersScreen: React.FC = () => {
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
                 >
                   {u.active ? 'Desactivar' : 'Activar'}
+                </button>
+                <button
+                  style={{
+                    ...actionButtonStyle,
+                    backgroundColor: colors.danger,
+                    color: '#FEF5E6',
+                  }}
+                  onClick={() => handleDelete(u)}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+                >
+                  Eliminar
                 </button>
               </div>
             </div>

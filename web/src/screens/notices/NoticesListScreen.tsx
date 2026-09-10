@@ -60,29 +60,6 @@ const contentStyle: React.CSSProperties = {
   gap: spacing.md,
 };
 
-const manageCardStyle: React.CSSProperties = {
-  backgroundColor: colors.surfaceLight,
-  borderRadius: borderRadius.lg,
-  padding: spacing.lg,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  border: `1px solid ${colors.primary}`,
-  transition: 'opacity 0.2s ease',
-};
-
-const manageCardTextStyle: React.CSSProperties = {
-  ...typography.body,
-  fontWeight: 600,
-  color: colors.primary,
-};
-
-const manageCardArrowStyle: React.CSSProperties = {
-  color: colors.primary,
-  fontSize: 20,
-};
-
 const noticeCardStyle: React.CSSProperties = {
   background: gradients.cardOrange,
   borderRadius: borderRadius.lg,
@@ -142,17 +119,6 @@ const NoticesListScreen: React.FC = () => {
         )}
       </div>
       <div style={contentStyle}>
-        {isAdmin && (
-          <div
-            style={manageCardStyle}
-            onClick={() => navigate('/notices')}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-          >
-            <span style={manageCardTextStyle}>Gestionar avisos</span>
-            <span style={manageCardArrowStyle}>›</span>
-          </div>
-        )}
         {notices.length === 0 ? (
           <EmptyState title="No hay avisos" message="Todavía no se han publicado avisos." />
         ) : (

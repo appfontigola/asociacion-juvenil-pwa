@@ -2,6 +2,7 @@ import React from 'react';
 import { LocalPresence } from '../../types';
 import { formatTimeAgo } from '../../utils/helpers';
 import { colors, spacing, borderRadius, gradients } from '../../constants/theme';
+import Avatar from '../ui/Avatar';
 
 interface UserPresenceCardProps {
   user: LocalPresence;
@@ -16,21 +17,6 @@ const cardStyle: React.CSSProperties = {
   gap: spacing.md,
   border: '1px solid rgba(2, 175, 119, 0.25)',
   boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
-};
-
-const avatarStyle: React.CSSProperties = {
-  width: 44,
-  height: 44,
-  borderRadius: '50%',
-  backgroundColor: colors.primary,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: 20,
-  fontWeight: 700,
-  color: '#FEF5E6',
-  flexShrink: 0,
-  userSelect: 'none',
 };
 
 const infoStyle: React.CSSProperties = {
@@ -59,11 +45,9 @@ const dotStyle: React.CSSProperties = {
 };
 
 const UserPresenceCard: React.FC<UserPresenceCardProps> = ({ user }) => {
-  const initial = user.userName ? user.userName.trim().charAt(0).toUpperCase() : '?';
-
   return (
     <div style={cardStyle}>
-      <div style={avatarStyle}>{initial}</div>
+      <Avatar name={user.userName} size={44} photoURL={user.userPhotoURL} />
       <div style={infoStyle}>
         <p style={nameStyle}>{user.userName}</p>
         <p style={timeStyle}>Desde {formatTimeAgo(user.entryTime)}</p>

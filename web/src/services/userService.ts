@@ -5,12 +5,17 @@ import {
   getDocs,
   updateDoc,
   setDoc,
+  deleteDoc,
   query,
   orderBy,
 } from 'firebase/firestore';
 import { getDb } from './firebase';
 import firebaseConfig from '../config/firebase';
 import { AppUser, CreateUserData, UpdateUserData } from '../types';
+
+const API_BASE = import.meta.env.DEV
+  ? 'http://localhost:3000'
+  : 'https://asociacion-juvenil-pwa.vercel.app';
 
 const COLLECTION = 'users';
 
@@ -112,4 +117,25 @@ export const toggleUserActive = async (
     active,
     updatedAt: new Date(),
   });
+  if (!active) {
+    try {
+      await deleteDoc(doc(db, 'pushSubscriptions', userId));
+    } catch {}
+  }
+};
+
+export const deleteUser = async (userId: string): Promise<void> => {
+  const db = getDb();
+  try {
+    await deleteDoc(doc(db, 'pushSubscriptions', userId));
+  } catch {}
+  const res = await fetch(`${API_BASE}/api/delete-user`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Error al eliminar usuario');
+  }
 };

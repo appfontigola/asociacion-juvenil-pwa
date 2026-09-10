@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotices } from '../../hooks/useNotices';
+import { sendPushNotification } from '../../services/notificationService';
 import Input from '../../components/ui/Input';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
 
@@ -71,6 +72,11 @@ const CreateNoticeScreen: React.FC = () => {
         authorName: user.displayName,
         authorPhotoURL: user.photoURL,
       });
+      sendPushNotification(
+        title.trim(),
+        description.trim().slice(0, 100) + (description.trim().length > 100 ? '...' : ''),
+        '/asociacion-juvenil-pwa/notices'
+      ).catch(() => {});
       navigate('/notices');
     } catch {
       window.alert('Error al crear el aviso');

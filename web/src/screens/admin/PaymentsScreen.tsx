@@ -227,7 +227,7 @@ const PaymentsScreen: React.FC = () => {
               return (
                 <Card key={user.id}>
                   <div style={userRowStyle}>
-                    <Avatar name={user.displayName} size={40} />
+                    <Avatar name={user.displayName} size={40} photoURL={user.photoURL} />
                     <div style={userInfoStyle}>
                       <p style={userNameStyle}>{user.displayName}</p>
                     </div>

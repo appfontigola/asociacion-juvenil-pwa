@@ -14,8 +14,8 @@ export const useLocalPresence = () => {
     return () => unsubscribe();
   }, []);
 
-  const enterLocal = useCallback(async (userId: string, userName: string) => {
-    await localService.setUserPresence(userId, userName, true);
+  const enterLocal = useCallback(async (userId: string, userName: string, userPhotoURL?: string) => {
+    await localService.setUserPresence(userId, userName, true, userPhotoURL);
   }, []);
 
   const leaveLocal = useCallback(async (userId: string) => {

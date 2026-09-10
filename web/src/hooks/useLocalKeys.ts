@@ -14,8 +14,8 @@ export const useLocalKeys = () => {
     return () => unsubscribe();
   }, []);
 
-  const takeKeys = useCallback(async (userId: string, userName: string) => {
-    await localService.setUserKeyStatus(userId, userName, true);
+  const takeKeys = useCallback(async (userId: string, userName: string, userPhotoURL?: string) => {
+    await localService.setUserKeyStatus(userId, userName, true, userPhotoURL);
   }, []);
 
   const returnKeys = useCallback(async (userId: string) => {

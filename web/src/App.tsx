@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import Loading from './components/ui/Loading';
 import { setUserPresence } from './services/localService';
+import { initOneSignal } from './services/oneSignalInit';
 import LoginScreen from './screens/auth/LoginScreen';
 import HomeScreen from './screens/home/HomeScreen';
 import NoticesListScreen from './screens/notices/NoticesListScreen';
@@ -57,6 +58,11 @@ const App: React.FC = () => {
   const oauthProcessed = useRef(false);
 
   useEffect(() => {
+    if (!standalone) return;
+    initOneSignal();
+  }, [standalone]);
+
+  useEffect(() => {
     if (oauthProcessed.current) return;
     const code = searchParams.get('code');
     const state = searchParams.get('state') || '';
@@ -75,13 +81,13 @@ const App: React.FC = () => {
     if (checkedIn.current || !user) return;
     if (searchParams.has('checkin')) {
       checkedIn.current = true;
-      setUserPresence(user.id, user.displayName, true).catch(() => {});
+      setUserPresence(user.id, user.displayName, true, user.photoURL).catch(() => {});
       searchParams.delete('checkin');
       setSearchParams(searchParams, { replace: true });
       window.alert('¡Te has marcado como presente en el local!');
     } else if (searchParams.has('checkout')) {
       checkedIn.current = true;
-      setUserPresence(user.id, user.displayName, false).catch(() => {});
+      setUserPresence(user.id, user.displayName, false, user.photoURL).catch(() => {});
       searchParams.delete('checkout');
       setSearchParams(searchParams, { replace: true });
       window.alert('¡Has marcado tu salida del local!');

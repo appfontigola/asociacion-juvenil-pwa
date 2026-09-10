@@ -11,6 +11,7 @@ export const colors = {
   textMuted: 'rgba(254, 245, 230, 0.55)',
   border: 'rgba(254, 245, 230, 0.14)',
   error: '#FF7223',
+  danger: '#E53935',
   success: '#02AF77',
   warning: '#FEBE0F',
   cardBackground: 'rgba(254, 245, 230, 0.06)',
