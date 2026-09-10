@@ -27,10 +27,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    const db = admin.firestore();
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      if (userData?.displayName === 'Admin') {
+        return res.status(403).json({ error: 'No se puede eliminar al administrador principal' });
+      }
+    }
+
     const auth = admin.auth();
     await auth.deleteUser(userId);
 
-    const db = admin.firestore();
     await db.collection('users').doc(userId).delete();
 
     return res.status(200).json({ ok: true });
