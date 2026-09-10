@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         try {
           await webPush.sendNotification(
             { endpoint: sub.endpoint, keys: sub.keys },
-            JSON.stringify({ title, body, url: url || '/' })
+            JSON.stringify({ title, body, url: url ? (url.startsWith('/') ? '/asociacion-juvenil-pwa' + url : url) : '/asociacion-juvenil-pwa/' })
           );
           success++;
         } catch {
