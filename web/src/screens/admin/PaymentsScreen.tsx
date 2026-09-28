@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paymentService from '../../services/paymentService';
 import * as userService from '../../services/userService';
-import { Payment } from '../../services/paymentService';
+import { Payment, PaymentPeriod } from '../../services/paymentService';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
 import Badge from '../../components/ui/Badge';
 import Avatar from '../../components/ui/Avatar';
@@ -38,12 +38,19 @@ const titleStyle: React.CSSProperties = {
   flex: 1,
 };
 
-const yearSelectorStyle: React.CSSProperties = {
+const selectorRowStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   gap: spacing.md,
-  marginBottom: spacing.lg,
+  marginBottom: spacing.md,
+};
+
+const yearSelectorStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: spacing.sm,
 };
 
 const yearArrowStyle: React.CSSProperties = {
@@ -58,9 +65,22 @@ const yearArrowStyle: React.CSSProperties = {
 
 const yearTextStyle: React.CSSProperties = {
   ...typography.h3,
-  minWidth: 80,
+  minWidth: 60,
   textAlign: 'center',
 };
+
+const periodBtnStyle = (active: boolean): React.CSSProperties => ({
+  padding: '8px 18px',
+  borderRadius: borderRadius.md,
+  border: `2px solid ${active ? colors.primary : colors.border}`,
+  background: active ? colors.primary : 'transparent',
+  color: active ? '#FEF5E6' : colors.textSecondary,
+  fontWeight: 700,
+  fontSize: 14,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  transition: 'all 0.2s ease',
+});
 
 const progressContainerStyle: React.CSSProperties = {
   marginBottom: spacing.lg,
@@ -125,6 +145,7 @@ const PaymentsScreen: React.FC = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
+  const [period, setPeriod] = useState<PaymentPeriod>(new Date().getMonth() < 6 ? 'FEB' : 'SEP');
   const [payments, setPayments] = useState<Payment[]>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -133,7 +154,7 @@ const PaymentsScreen: React.FC = () => {
     setLoading(true);
     try {
       const [paymentsData, usersData] = await Promise.all([
-        paymentService.getPaymentsByYear(year),
+        paymentService.getPaymentsByYear(year, period),
         userService.getAllUsers(),
       ]);
       setPayments(paymentsData);
@@ -143,7 +164,7 @@ const PaymentsScreen: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [year]);
+  }, [year, period]);
 
   useEffect(() => {
     fetchData();
@@ -158,7 +179,7 @@ const PaymentsScreen: React.FC = () => {
     const current = getPaymentStatus(user.id);
     const newStatus = !current;
     try {
-      await paymentService.setPayment(user.id, user.displayName, year, newStatus);
+      await paymentService.setPayment(user.id, user.displayName, year, period, newStatus);
       setPayments((prev) => {
         const filtered = prev.filter((p) => p.userId !== user.id);
         return [
@@ -167,6 +188,7 @@ const PaymentsScreen: React.FC = () => {
             userId: user.id,
             userName: user.displayName,
             year,
+            period,
             paid: newStatus,
             paidAt: newStatus ? new Date() : null,
           },
@@ -190,21 +212,35 @@ const PaymentsScreen: React.FC = () => {
         <h1 style={titleStyle}>Cuotas</h1>
       </div>
 
-      <div style={yearSelectorStyle}>
+      <div style={selectorRowStyle}>
+        <div style={yearSelectorStyle}>
+          <button
+            style={yearArrowStyle}
+            onClick={() => setYear((y) => y - 1)}
+            disabled={year <= 2020}
+          >
+            ‹
+          </button>
+          <span style={yearTextStyle}>{year}</span>
+          <button
+            style={yearArrowStyle}
+            onClick={() => setYear((y) => y + 1)}
+            disabled={year >= 2099}
+          >
+            ›
+          </button>
+        </div>
         <button
-          style={yearArrowStyle}
-          onClick={() => setYear((y) => y - 1)}
-          disabled={year <= 2020}
+          style={periodBtnStyle(period === 'FEB')}
+          onClick={() => setPeriod('FEB')}
         >
-          ‹
+          Cuota FEB
         </button>
-        <span style={yearTextStyle}>{year}</span>
         <button
-          style={yearArrowStyle}
-          onClick={() => setYear((y) => y + 1)}
-          disabled={year >= 2099}
+          style={periodBtnStyle(period === 'SEP')}
+          onClick={() => setPeriod('SEP')}
         >
-          ›
+          Cuota SEP
         </button>
       </div>
 

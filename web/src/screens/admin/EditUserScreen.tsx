@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import * as userService from '../../services/userService';
 import { sendPasswordResetEmail } from '../../services/authService';
 import { AppUser, UserRole } from '../../types';
+import { SUPER_ADMIN_NAME } from '../../constants/config';
 import UserForm from '../../components/admin/UserForm';
 import Loading from '../../components/ui/Loading';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
@@ -121,6 +122,22 @@ const EditUserScreen: React.FC = () => {
         </div>
         <div style={contentStyle}>
           <p style={{ color: colors.error }}>Usuario no encontrado</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user.displayName === SUPER_ADMIN_NAME) {
+    return (
+      <div style={pageStyle}>
+        <div style={topBarStyle}>
+          <button style={backButtonStyle} onClick={() => navigate(-1)}>‹</button>
+          <h1 style={titleStyle}>Editar usuario</h1>
+        </div>
+        <div style={contentStyle}>
+          <p style={{ color: colors.primary, fontSize: 16 }}>
+            El administrador principal no se puede editar.
+          </p>
         </div>
       </div>
     );

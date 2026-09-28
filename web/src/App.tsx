@@ -28,6 +28,8 @@ import QRScreen from './screens/admin/QRScreen';
 import LocalLogScreen from './screens/admin/LocalLogScreen';
 import KeysLogScreen from './screens/admin/KeysLogScreen';
 import AlarmLogScreen from './screens/admin/AlarmLogScreen';
+import ManualScreen from './screens/help/ManualScreen';
+import ShoppingListScreen from './screens/local/ShoppingListScreen';
 import DropboxConnectScreen from './screens/admin/DropboxConnectScreen';
 import TabLayout from './components/TabLayout';
 import InstallPage from './components/InstallPage';
@@ -134,6 +136,8 @@ const App: React.FC = () => {
         <Route path="/admin/keys-log" element={<ProtectedRoute><KeysLogScreen /></ProtectedRoute>} />
         <Route path="/admin/alarm-log" element={<ProtectedRoute><AlarmLogScreen /></ProtectedRoute>} />
         <Route path="/admin/dropbox" element={<ProtectedRoute><DropboxConnectScreen /></ProtectedRoute>} />
+        <Route path="/manual" element={<ProtectedRoute><ManualScreen /></ProtectedRoute>} />
+        <Route path="/local/shopping" element={<ProtectedRoute><ShoppingListScreen /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

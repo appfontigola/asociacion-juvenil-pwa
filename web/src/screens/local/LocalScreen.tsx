@@ -249,6 +249,22 @@ const LocalScreen: React.FC = () => {
           </button>
         </div>
 
+        <button
+          style={{
+            ...toggleCardStyle,
+            cursor: 'pointer',
+          }}
+          onClick={() => navigate('/local/shopping')}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; }}
+        >
+          <div style={toggleInfoStyle}>
+            <span style={toggleIconStyle}>🛒</span>
+            <p style={toggleLabelStyle}>Compras</p>
+          </div>
+          <span style={{ color: colors.primary, fontSize: 20 }}>›</span>
+        </button>
+
         <h3 style={sectionTitleStyle}>Personas en el local</h3>
         {activeUsers.length === 0 ? (
           <EmptyState title="No hay nadie en el local" message="Parece que no hay nadie en este momento." />

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Manual de Usuario — App Asociación Juvenil</title>
+<style>
+  @page { margin: 2cm; }
+  @media print { .no-print { display: none !important; } body { font-size: 12pt; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1a1a2e; line-height: 1.7; padding: 40px; max-width: 900px; margin: 0 auto; background: #fff; }
+  h1 { font-size: 30px; color: #0B151D; border-bottom: 3px solid #FF7223; padding-bottom: 12px; margin-bottom: 30px; }
+  h2 { font-size: 22px; color: #FF7223; margin-top: 40px; margin-bottom: 15px; border-left: 5px solid #FF7223; padding-left: 14px; }
+  h3 { font-size: 17px; color: #0B151D; margin-top: 25px; margin-bottom: 10px; }
+  p { margin-bottom: 12px; font-size: 15px; }
+  ul { margin: 10px 0 15px 0; padding-left: 24px; }
+  li { margin-bottom: 8px; font-size: 15px; }
+  ol { margin: 10px 0 15px 0; padding-left: 24px; }
+  ol li { margin-bottom: 8px; font-size: 15px; }
+  .cover { text-align: center; margin-bottom: 50px; padding: 50px 30px; background: linear-gradient(135deg, #0B151D 0%, #1a2a3a 100%); color: #FEF5E6; border-radius: 20px; }
+  .cover h1 { color: #FEF5E6; border-bottom: 3px solid #FF7223; font-size: 36px; }
+  .cover .subtitle { color: #FF7223; font-size: 18px; margin-top: 10px; }
+  .cover .version { color: rgba(254,245,230,0.5); font-size: 13px; margin-top: 15px; }
+  .tip { background: #f0faf5; border-left: 4px solid #02AF77; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; }
+  .tip strong { color: #02AF77; }
+  .warning { background: #fff8e1; border-left: 4px solid #FEBE0F; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 14px; }
+  .warning strong { color: #e6a800; }
+  .step { background: #f8f9fa; border-radius: 12px; padding: 16px 20px; margin: 12px 0; border: 1px solid #e0e0e0; }
+  .step-num { display: inline-block; width: 30px; height: 30px; background: #FF7223; color: white; border-radius: 50%; text-align: center; line-height: 30px; font-weight: bold; font-size: 14px; margin-right: 10px; }
+  .section-icon { font-size: 24px; margin-right: 8px; vertical-align: middle; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+  th { background: #0B151D; color: #FEF5E6; padding: 10px 14px; text-align: left; }
+  td { padding: 10px 14px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  .btn-example { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .btn-orange { background: #FF7223; color: white; }
+  .btn-green { background: #02AF77; color: white; }
+  .btn-yellow { background: #FEBE0F; color: #0B151D; }
+  .print-btn { position: fixed; bottom: 20px; right: 20px; background: #FF7223; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(255,114,35,0.4); z-index: 100; }
+  .print-btn:hover { background: #e6621f; }
+  .page-break { page-break-before: always; }
+  .toc { background: #f8f9fa; border-radius: 12px; padding: 20px 30px; margin: 20px 0; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 5px 0; border-bottom: 1px dotted #ddd; }
+  .toc li:last-child { border-bottom: none; }
+  .toc a { color: #FF7223; text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+
+<div class="cover">
+  <h1>Manual de Usuario</h1>
+  <div class="subtitle">App Asociación Juvenil</div>
+  <div class="version">Versión 1.0.0 — Agosto 2026</div>
+</div>
+
+<div class="toc">
+  <h3 style="margin-bottom: 10px;">Contenido</h3>
+  <ul>
+    <li><a href="#instalar">1. Instalar la app</a></li>
+    <li><a href="#login">2. Iniciar sesión</a></li>
+    <li><a href="#home">3. Pantalla principal</a></li>
+    <li><a href="#avisos">4. Avisos</a></li>
+    <li><a href="#calendario">5. Calendario y eventos</a></li>
+    <li><a href="#local">6. Local (presencia, llaves, alarma)</a></li>
+    <li><a href="#perfil">7. Mi perfil</a></li>
+    <li><a href="#notificaciones">8. Notificaciones push</a></li>
+    <li><a href="#qr">9. Código QR de check-in</a></li>
+    <li><a href="#admin">10. Panel de administración</a></li>
+    <li><a href="#faq">11. Preguntas frecuentes</a></li>
+  </ul>
+</div>
+
+<!-- 1. INSTALAR -->
+<h2 id="instalar"><span class="section-icon">📱</span>1. Instalar la app</h2>
+<div class="section">
+  <p>La app es una PWA (Progressive Web App), lo que significa que se instala directamente desde el navegador, sin necesidad de ir a una tienda de apps.</p>
+
+  <h3>En iPhone (Safari)</h3>
+  <div class="step">
+    <span class="step-num">1</span> Abre <strong>Safari</strong> y ve a:<br>
+    <strong>appfontigola.github.io/asociacion-juvenil-pwa/</strong>
+  </div>
+  <div class="step">
+    <span class="step-num">2</span> Toca el botón <strong>Compartir</strong> (cuadro con flecha ↑ abajo)
+  </div>
+  <div class="step">
+    <span class="step-num">3</span> Selecciona <strong>"Añadir a pantalla de inicio"</strong>
+  </div>
+  <div class="step">
+    <span class="step-num">4</span> Pulsa <strong>"Añadir"</strong> en la esquina superior derecha
+  </div>
+  <div class="step">
+    <span class="step-num">5</span> La app aparecerá en tu pantalla de inicio como una app normal
+  </div>
+
+  <h3>En Android (Chrome)</h3>
+  <div class="step">
+    <span class="step-num">1</span> Abre <strong>Chrome</strong> y ve a la dirección de la app
+  </div>
+  <div class="step">
+    <span class="step-num">2</span> Toca los <strong>tres puntos</strong> (menú) arriba a la derecha
+  </div>
+  <div class="step">
+    <span class="step-num">3</span> Selecciona <strong>"Instalar app"</strong> o <strong>"Añadir a pantalla de inicio"</strong>
+  </div>
+  <div class="step">
+    <span class="step-num">4</span> Confirma la instalación
+  </div>
+
+  <div class="tip"><strong>Consejo:</strong> Una vez instalada, la app se abre como una aplicación independiente, sin la barra del navegador. Para acceder a ella, búscala en tu pantalla de inicio junto al resto de apps.</div>
+</div>
+
+<!-- 2. LOGIN -->
+<h2 id="login"><span class="section-icon">🔐</span>2. Iniciar sesión</h2>
+<div class="section">
+  <p>Para usar la app necesitas tener una cuenta creada por un administrador.</p>
+
+  <div class="step">
+    <span class="step-num">1</span> Abre la app
+  </div>
+  <div class="step">
+    <span class="step-num">2</span> Introduce tu <strong>email</strong> y <strong>contraseña</strong>
+  </div>
+  <div class="step">
+    <span class="step-num">3</span> Pulsa <strong>"Iniciar sesión"</strong>
+  </div>
+
+  <div class="warning"><strong>¿Olvidaste tu contraseña?</strong> Contacta con un administrador para que te envíe un email de recuperación.</div>
+
+  <p>Una vez iniciada la sesión, la app recuerda tus datos. No tendrás que volver a iniciar sesión cada vez que abras la app, a menos que cierres sesión manualmente.</p>
+</div>
+
+<!-- 3. HOME -->
+<h2 id="home"><span class="section-icon">🏠</span>3. Pantalla principal</h2>
+<div class="section">
+  <p>Al iniciar sesión llegas a la pantalla principal. Desde aquí tienes acceso rápido a todas las secciones:</p>
+
+  <table>
+    <tr><th>Tarjeta</th><th>Qué hace</th></tr>
+    <tr><td>📢 <strong>Avisos</strong></td><td>Ver las noticias y anuncios de la asociación</td></tr>
+    <tr><td>📅 <strong>Calendario</strong></td><td>Ver eventos próximos y confirmar tu asistencia</td></tr>
+    <tr><td>📍 <strong>Local</strong></td><td>Registrar tu presencia en el local, gestionar llaves y alarma</td></tr>
+    <tr><td>👤 <strong>Perfil</strong></td><td>Ver y editar tu información personal</td></tr>
+    <tr><td>⚙️ <strong>Panel Admin</strong></td><td>Gestionar usuarios, avisos, eventos y más (solo administradores)</td></tr>
+  </table>
+
+  <p>Si hay avisos nuevos o eventos sin leer, verás un <strong>número indicador</strong> (badge) naranja en la tarjeta correspondiente.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 4. AVISOS -->
+<h2 id="avisos"><span class="section-icon">📢</span>4. Avisos</h2>
+<div class="section">
+  <p>Los avisos son noticias y anuncios publicados por los administradores de la asociación.</p>
+
+  <h3>Ver avisos</h3>
+  <ol>
+    <li>Pulsa la tarjeta <strong>"Avisos"</strong> en la pantalla principal</li>
+    <li>Verás la lista de todos los avisos ordenados de más reciente a más antiguo</li>
+    <li>Pulsa en un aviso para ver su contenido completo</li>
+  </ol>
+
+  <h3>Crear un aviso (solo administradores)</h3>
+  <ol>
+    <li>En la pantalla de Avisos, pulsa el botón <span class="btn-example btn-orange">+ Nuevo</span></li>
+    <li>Escribe el <strong>título</strong> del aviso</li>
+    <li>Escribe la <strong>descripción</strong> o contenido</li>
+    <li>Pulsa <strong>"Crear aviso"</strong></li>
+    <li>Se enviará automáticamente una <strong>notificación push</strong> a todos los dispositivos suscritos</li>
+  </ol>
+
+  <div class="tip"><strong>Tip:</strong> Las notificaciones push llegan incluso si la app está cerrada. Los usuarios verán una alerta en su teléfono con el título del aviso.</div>
+</div>
+
+<!-- 5. CALENDARIO -->
+<h2 id="calendario"><span class="section-icon">📅</span>5. Calendario y eventos</h2>
+<div class="section">
+  <p>El calendario muestra todos los eventos programados por la asociación.</p>
+
+  <h3>Ver el calendario</h3>
+  <ol>
+    <li>Pulsa la tarjeta <strong>"Calendario"</strong></li>
+    <li>Verás un calendario mensual con <strong>puntos naranjas</strong> en los días que tienen eventos</li>
+    <li>Pulsa en un día para ver los eventos de ese día</li>
+    <li>Pulsa en un evento para ver todos los detalles</li>
+  </ol>
+
+  <h3>Confirmar asistencia</h3>
+  <p>Al abrir un evento, puedes indicar si asistirás o no:</p>
+  <ul>
+    <li>Pulsa <span class="btn-example btn-green">✓ Asistiré</span> si piensas ir</li>
+    <li>Pulsa <span class="btn-example btn-yellow">✗ No asistiré</span> si no puedes ir</li>
+    <li>Puedes cambiar tu respuesta en cualquier momento</li>
+  </ul>
+
+  <p>Debajo de los botones verás un resumen de cuántas personas han confirmado asistencia y cuántas no.</p>
+
+  <h3>Crear un evento (solo administradores)</h3>
+  <ol>
+    <li>En la pantalla de Calendario, pulsa <span class="btn-example btn-orange">+ Nuevo</span></li>
+    <li>Rellena: título, descripción, fecha, hora y ubicación</li>
+    <li>Pulsa <strong>"Crear evento"</strong></li>
+  </ol>
+</div>
+
+<!-- 6. LOCAL -->
+<h2 id="local"><span class="section-icon">📍</span>6. Local</h2>
+<div class="section">
+  <p>Desde esta sección puedes gestionar tu presencia en el local de la asociación, las llaves y la alarma.</p>
+
+  <h3>Registrar presencia (check-in / check-out)</h3>
+  <p>Para que los demás sepan si estás en el local:</p>
+  <ol>
+    <li>Entra en la sepción <strong>"Local"</strong></li>
+    <li>Pulsa el botón de <strong>check-in</strong> cuando llegues al local</li>
+    <li>Pulsa el botón de <strong>check-out</strong> cuando te vayas</li>
+  </ol>
+
+  <div class="tip"><strong>Atajo rápido:</strong> Si escaneas el código QR del local con tu teléfono, se hace el check-in o check-out automáticamente.</div>
+
+  <h3>Gestionar llaves</h3>
+  <p>Si necesitas llevar las llaves del local:</p>
+  <ol>
+    <li>En la pantalla del Local, busca la sección de <strong>"Llaves"</strong></li>
+    <li>Pulsa para <strong>recoger</strong> las llaves → se registra quién las tiene</li>
+    <li>Cuando las devuelvas, pulsa para <strong>devolver</strong></li>
+  </ol>
+  <p>El administrador puede ver un historial de quién ha cogido y devuelto las llaves en todo momento.</p>
+
+  <h3>Alarma</h3>
+  <p>Si se activa la alarma del local:</p>
+  <ol>
+    <li>En la pantalla del Local, busca el botón de <strong>"Alarma"</strong></li>
+    <li>Pulsa para <strong>activar</strong> o <strong>desactivar</strong> la alarma</li>
+    <li>Si el administrador ha conectado Dropbox, se grabará un video automáticamente</li>
+  </ol>
+
+  <div class="warning"><strong>Importante:</strong> La alarma solo debe usarse en caso de necesidad real. El uso indebido quedará registrado con tu nombre y hora.</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 7. PERFIL -->
+<h2 id="perfil"><span class="section-icon">👤</span>7. Mi perfil</h2>
+<div class="section">
+  <p>Desde tu perfil puedes ver y editar tu información personal.</p>
+
+  <h3>Ver tu perfil</h3>
+  <ul>
+    <li>Foto de perfil</li>
+    <li>Nombre completo</li>
+    <li>Email</li>
+    <li>Rol (Administrador o Usuario)</li>
+    <li>Fecha de registro</li>
+  </ul>
+
+  <h3>Editar tu perfil</h3>
+  <ol>
+    <li>Pulsa el botón <strong>"Editar perfil"</strong></li>
+    <li>Cambia tu nombre y/o foto de perfil</li>
+    <li>Pulsa <strong>"Guardar"</strong></li>
+  </ol>
+
+  <h3>Cambiar contraseña</h3>
+  <ol>
+    <li>En tu perfil, pulsa <strong>"Cambiar contraseña"</strong></li>
+    <li>Escribe tu contraseña actual</li>
+    <li>Escribe la nueva contraseña dos veces</li>
+    <li>Pulsa <strong>"Actualizar"</strong></li>
+  </ol>
+</div>
+
+<!-- 8. NOTIFICACIONES -->
+<h2 id="notificaciones"><span class="section-icon">🔔</span>8. Notificaciones push</h2>
+<div class="section">
+  <p>Las notificaciones push te avisan cuando se publica un aviso nuevo, aunque la app esté cerrada.</p>
+
+  <h3>Activar notificaciones</h3>
+  <ol>
+    <li>En la pantalla principal, verás un botón naranja: <strong>"🔔 Activar notificaciones"</strong></li>
+    <li>Púlsalo y acepta el permiso del navegador</li>
+    <li>Listo. Recibirás notificaciones cada vez que se publique un aviso</li>
+  </ol>
+
+  <h3>¿Qué veo cuando llega una notificación?</h3>
+  <ul>
+    <li>Un aviso emergente en la pantalla de tu teléfono</li>
+    <li>El título del aviso y una preview del contenido</li>
+    <li>Al tocar la notificación, se abre directamente la app en la sección de Avisos</li>
+  </ul>
+
+  <div class="tip"><strong>Nota:</strong> Las notificaciones están vinculadas a tu dispositivo, no a tu cuenta. Si cambias de cuenta en el mismo teléfono, seguirás recibiendo notificaciones.</div>
+
+  <h3>Desactivar notificaciones</h3>
+  <p>Si en algún momento quieres desactivarlas:</p>
+  <ul>
+    <li><strong>iPhone:</strong> Ajustes → Notificaciones → busca la app → desactivar</li>
+    <li><strong>Android:</strong> Ajustes → Apps → busca la app → Notificaciones → desactivar</li>
+  </ul>
+</div>
+
+<!-- 9. QR -->
+<h2 id="qr"><span class="section-icon">📷</span>9. Código QR de check-in</h2>
+<div class="section">
+  <p>Si el administrador ha generado un código QR, puedes usarlo para hacer check-in o check-out rápidamente al llegar o irte del local.</p>
+
+  <h3>Cómo usarlo</h3>
+  <ol>
+    <li>Apunta la cámara de tu teléfono al código QR</li>
+    <li>Se abrirá automáticamente la app</li>
+    <li>Tu presencia quedará registrada con la hora exacta</li>
+  </ol>
+
+  <div class="tip"><strong>Consejo:</strong> Puedes guardar una imagen del código QR en tu teléfono para escanearlo fácilmente cada vez que vayas al local.</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 10. ADMIN -->
+<h2 id="admin"><span class="section-icon">⚙️</span>10. Panel de administración</h2>
+<div class="section">
+  <p><em>Solo disponible para usuarios con rol de administrador.</em></p>
+  <p>El panel de administración permite gestionar todos los aspectos de la asociación desde un solo lugar.</p>
+
+  <h3>Gestionar Usuarios</h3>
+  <ul>
+    <li><strong>Ver todos los usuarios</strong> registrados con su nombre, email, rol y estado</li>
+    <li><strong>Crear un usuario nuevo:</strong> Nombre, email, contraseña y rol</li>
+    <li><strong>Editar usuario:</strong> Cambiar nombre, rol, o enviar email de recuperación de contraseña</li>
+    <li><strong>Activar/Desactivar usuario:</strong> Un usuario desactivado no puede iniciar sesión</li>
+    <li><strong>Eliminar usuario:</strong> Borrar completamente del sistema (Acción irreversible)</li>
+  </ul>
+
+  <h3>Gestionar Avisos</h3>
+  <ul>
+    <li>Crear, editar y eliminar avisos</li>
+    <li>Cada aviso nuevo genera una notificación push automática</li>
+  </ul>
+
+  <h3>Gestionar Eventos</h3>
+  <ul>
+    <li>Crear, editar y eliminar eventos del calendario</li>
+    <li>Establecer fecha, hora, título, descripción y ubicación</li>
+  </ul>
+
+  <h3>Overview de Asistencia</h3>
+  <ul>
+    <li>Ver estadísticas de asistencia por usuario</li>
+    <li>Saber quién asistirá, quién no, y quién no ha respondido</li>
+    <li>Datos de todos los eventos en una sola vista</li>
+  </ul>
+
+  <h3>Gestión de Pagos</h3>
+  <ul>
+    <li>Controlar las cuotas anuales de cada socio</li>
+    <li>Marcar como pagado o pendiente</li>
+    <li>Vista anual de todos los socios</li>
+  </ul>
+
+  <h3>Logs en tiempo real</h3>
+  <ul>
+    <li><strong>Log de presencia:</strong> Quién ha entrado y salido del local, con hora</li>
+    <li><strong>Log de llaves:</strong> Quién tiene las llaves en cada momento</li>
+    <li><strong>Log de alarma:</strong> Registro de activaciones/desactivaciones de la alarma</li>
+  </ul>
+
+  <h3>Conectar Dropbox</h3>
+  <ul>
+    <li>Vincular una cuenta de Dropbox para almacenar videos de alarma</li>
+    <li>Cuando se activa la alarma, se graba y sube el video automáticamente</li>
+  </ul>
+</div>
+
+<!-- 11. FAQ -->
+<h2 id="faq"><span class="section-icon">❓</span>11. Preguntas frecuentes</h2>
+<div class="section">
+
+  <h3>¿Cómo me doy de alta como usuario?</h3>
+  <p>Tu cuenta es creada por un administrador de la asociación. Contacta con ellos para que te creen un usuario con tu email y contraseña.</p>
+
+  <h3>No recuerdo mi contraseña, ¿qué hago?</h3>
+  <p>Contacta con un administrador. El sistema puede enviar un email de recuperación a tu dirección de correo.</p>
+
+  <h3>¿La app funciona sin conexión a internet?</h3>
+  <p>La app puede mostrar información cacheada sin conexión, pero para operaciones como check-in, crear avisos o recibir notificaciones necesitas conexión.</p>
+
+  <h3>¿Cómo elimino mi cuenta?</h3>
+  <p>Contacta con un administrador. Solo ellos pueden eliminar cuentas del sistema.</p>
+
+  <h3>No me llegan las notificaciones, ¿qué puedo hacer?</h3>
+  <ul>
+    <li>Comprueba que las notificaciones están activadas en los ajustes de tu teléfono</li>
+    <li>Asegúrate de haber pulsado el botón "Activar notificaciones" en la app</li>
+    <li>Si no funciona, intenta eliminar la app e instalarla de nuevo</li>
+  </ul>
+
+  <h3>¿Puedo usar la app en varios dispositivos?</h3>
+  <p>Sí. Puedes instalar la app en tantos dispositivos como quieras. Las notificaciones llegarán a todos los dispositivos donde las hayas activado.</p>
+
+  <h3>¿Cómo registro mi presencia en el local?</h3>
+  <p>Entra en la sección "Local" y pulsa el botón de check-in. También puedes escanear el código QR si está disponible.</p>
+
+  <h3>¿Qué pasa si activo la alarma por error?</h3>
+  <p>Contacta inmediatamente con un administrador para que pueda desactivarla y revisar el registro.</p>
+
+</div>
+
+<div style="text-align: center; margin-top: 50px; padding: 20px; color: #999; font-size: 12px; border-top: 1px solid #eee;">
+  <p>Manual de Usuario — App Asociación Juvenil v1.0.0</p>
+  <p>https://appfontigola.github.io/asociacion-juvenil-pwa/</p>
+  <p style="margin-top: 8px;">Para soporte contacta con el administrador de la asociación</p>
+</div>
+
+</body>
+</html>

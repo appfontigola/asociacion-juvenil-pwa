@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as userService from '../../services/userService';
 import { AppUser } from '../../types';
+import { SUPER_ADMIN_NAME } from '../../constants/config';
 import Avatar from '../../components/ui/Avatar';
 import Badge from '../../components/ui/Badge';
 import Loading from '../../components/ui/Loading';
@@ -12,18 +13,6 @@ const pageStyle: React.CSSProperties = {
   backgroundColor: colors.background,
   display: 'flex',
   flexDirection: 'column',
-};
-
-const topBarStyle: React.CSSProperties = {
-  backgroundColor: colors.surface,
-  padding: `${spacing.md}px ${spacing.lg}px`,
-  borderBottom: `1px solid ${colors.border}`,
-  display: 'flex',
-  alignItems: 'center',
-  gap: spacing.md,
-  position: 'sticky',
-  top: 0,
-  zIndex: 10,
 };
 
 const backButtonStyle: React.CSSProperties = {
@@ -118,12 +107,18 @@ const ManageUsersScreen: React.FC = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'users' | 'admins'>('all');
+  const [showList, setShowList] = useState(false);
+  const [adminCount, setAdminCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
 
   const loadUsers = async () => {
     setLoading(true);
     try {
       const data = await userService.getAllUsers();
       setUsers(data);
+      setAdminCount(data.filter(u => u.role === 'admin').length);
+      setUserCount(data.filter(u => u.role !== 'admin').length);
     } catch {
       console.error('Error loading users');
     } finally {
@@ -135,22 +130,36 @@ const ManageUsersScreen: React.FC = () => {
     loadUsers();
   }, []);
 
+  const isSuperAdmin = (u: AppUser) => u.displayName === SUPER_ADMIN_NAME;
+
   const handleToggleActive = async (u: AppUser) => {
+    if (isSuperAdmin(u)) {
+      window.alert('No se puede desactivar al administrador principal');
+      return;
+    }
     try {
       await userService.toggleUserActive(u.id, !u.active);
       setUsers((prev) =>
         prev.map((x) => (x.id === u.id ? { ...x, active: !x.active } : x))
       );
+      setAdminCount(prev => prev.filter(u => u.role === 'admin').length);
+      setUserCount(prev => prev.filter(u => u.role !== 'admin').length);
     } catch {
       console.error('Error toggling user active status');
     }
   };
 
   const handleDelete = async (u: AppUser) => {
+    if (isSuperAdmin(u)) {
+      window.alert('No se puede eliminar al administrador principal');
+      return;
+    }
     if (!confirm(`¿Eliminar a ${u.displayName}? Esta acción no se puede deshacer.`)) return;
     try {
       await userService.deleteUser(u.id);
       setUsers((prev) => prev.filter((x) => x.id !== u.id));
+      setAdminCount(prev => prev.filter(u => u.role === 'admin').length);
+      setUserCount(prev => prev.filter(u => u.role !== 'admin').length);
     } catch (e: any) {
       alert('Error: ' + (e.message || String(e)));
     }
@@ -158,23 +167,56 @@ const ManageUsersScreen: React.FC = () => {
 
   return (
     <div style={pageStyle}>
-      <div style={topBarStyle}>
-        <button style={backButtonStyle} onClick={() => navigate('/admin')}>‹</button>
+      <div style={{
+        backgroundColor: colors.surface,
+        padding: `${spacing.md}px ${spacing.lg}px`,
+        borderBottom: `1px solid ${colors.border}`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: spacing.md,
+        marginBottom: spacing.lg,
+      }}>
+        <button style={{ background: 'none', border: 'none', color: colors.primary, fontSize: 28, fontWeight: 700, cursor: 'pointer' }} onClick={() => navigate('/admin')}>‹</button>
         <h1 style={titleStyle}>Gestionar usuarios</h1>
-        <button
-          style={addButtonStyle}
-          onClick={() => navigate('/admin/create-user')}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-        >
-          + Añadir
-        </button>
       </div>
       <div style={contentStyle}>
-        {loading ? (
-          <Loading />
-        ) : (
-          users.map((u) => (
+        <div style={{ display: 'flex', gap: spacing.sm, marginTop: spacing.sm }}>
+          <button
+            style={{ padding: '8px 16px', borderRadius: borderRadius.md, border: filter === 'all' ? `2px solid ${colors.primary}` : 'none', background: filter === 'all' ? colors.primary : 'transparent', color: filter === 'all' ? '#FEF5E6' : colors.textSecondary, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s ease' }}
+            onClick={() => {
+              setFilter('all');
+              setShowList(true);
+            }}
+          >
+            Usuarios Totales: {users.length}
+          </button>
+          <button
+            style={{ padding: '8px 16px', borderRadius: borderRadius.md, border: filter === 'users' ? `2px solid ${colors.primary}` : 'none', background: filter === 'users' ? colors.primary : 'transparent', color: filter === 'users' ? '#FEF5E6' : colors.textSecondary, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s ease' }}
+            onClick={() => {
+              setFilter('users');
+              setShowList(true);
+            }}
+          >
+            Usuarios: {userCount}
+          </button>
+          <button
+            style={{ padding: '8px 16px', borderRadius: borderRadius.md, border: filter === 'admins' ? `2px solid ${colors.primary}` : 'none', background: filter === 'admins' ? colors.primary : 'transparent', color: filter === 'admins' ? '#FEF5E6' : colors.textSecondary, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s ease' }}
+            onClick={() => {
+              setFilter('admins');
+              setShowList(true);
+            }}
+          >
+            Administradores: {adminCount}
+          </button>
+        </div>
+        {showList ? (
+          users
+            .filter((u) => {
+              if (filter === 'users') return u.role !== 'admin';
+              if (filter === 'admins') return u.role === 'admin';
+              return true;
+            })
+            .map((u) => (
             <div key={u.id} style={userCardStyle}>
               <Avatar name={u.displayName} size={44} photoURL={u.photoURL} />
               <div style={userInfoStyle}>
@@ -191,41 +233,41 @@ const ManageUsersScreen: React.FC = () => {
                 </div>
               </div>
               <div style={userActionsStyle}>
-                <button
-                  style={{ ...actionButtonStyle, backgroundColor: colors.primary, color: '#FEF5E6' }}
-                  onClick={() => navigate(`/admin/edit-user/${u.id}`)}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-                >
-                  Editar
-                </button>
-                <button
-                  style={{
-                    ...actionButtonStyle,
-                    backgroundColor: u.active ? colors.warning : colors.success,
-                    color: '#0B151D',
-                  }}
-                  onClick={() => handleToggleActive(u)}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-                >
-                  {u.active ? 'Desactivar' : 'Activar'}
-                </button>
-                <button
-                  style={{
-                    ...actionButtonStyle,
-                    backgroundColor: colors.danger,
-                    color: '#FEF5E6',
-                  }}
-                  onClick={() => handleDelete(u)}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-                >
-                  Eliminar
-                </button>
+                {isSuperAdmin(u) ? (
+                  <Badge label="Protegido" variant="primary" size="md" />
+                ) : (
+                  <>
+                    <button
+                      style={{ ...actionButtonStyle, backgroundColor: colors.primary, color: '#FEF5E6' }}
+                      onClick={() => navigate(`/admin/edit-user/${u.id}`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      style={{
+                        ...actionButtonStyle,
+                        backgroundColor: u.active ? colors.warning : colors.success,
+                        color: '#0B151D',
+                      }}
+                      onClick={() => handleToggleActive(u)}
+                    >
+                      {u.active ? 'Desactivar' : 'Activar'}
+                    </button>
+                    <button
+                      style={{ ...actionButtonStyle, backgroundColor: colors.danger, color: '#FEF5E6' }}
+                      onClick={() => handleDelete(u)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))
+        ) : (
+          <p style={{ ...typography.body, color: colors.textMuted, textAlign: 'center', marginTop: spacing.xl }}>
+            Selecciona una opción para ver la lista
+          </p>
         )}
       </div>
     </div>

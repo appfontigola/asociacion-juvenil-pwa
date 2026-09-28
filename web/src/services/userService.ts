@@ -113,6 +113,13 @@ export const toggleUserActive = async (
   active: boolean
 ): Promise<void> => {
   const db = getDb();
+  const userDoc = await getDoc(doc(db, COLLECTION, userId));
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    if (userData?.displayName === 'Admin') {
+      throw new Error('No se puede desactivar al administrador principal');
+    }
+  }
   await updateDoc(doc(db, COLLECTION, userId), {
     active,
     updatedAt: new Date(),
