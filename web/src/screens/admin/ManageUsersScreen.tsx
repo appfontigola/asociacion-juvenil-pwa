@@ -8,14 +8,14 @@ import Badge from '../../components/ui/Badge';
 import Loading from '../../components/ui/Loading';
 import { colors, spacing, borderRadius, typography, gradients } from '../../constants/theme';
 
-const pageStyle: React.CSSProperties = {
+const pageStyle = {
   flex: 1,
   backgroundColor: colors.background,
   display: 'flex',
   flexDirection: 'column',
 };
 
-const backButtonStyle: React.CSSProperties = {
+const backButtonStyle = {
   background: 'none',
   border: 'none',
   color: colors.primary,
@@ -27,13 +27,13 @@ const backButtonStyle: React.CSSProperties = {
   fontFamily: 'inherit',
 };
 
-const titleStyle: React.CSSProperties = {
+const titleStyle = {
   ...typography.h2,
   margin: 0,
   flex: 1,
 };
 
-const addButtonStyle: React.CSSProperties = {
+const addButtonStyle = {
   padding: `${spacing.sm}px ${spacing.md}px`,
   borderRadius: borderRadius.sm,
   border: 'none',
@@ -47,7 +47,7 @@ const addButtonStyle: React.CSSProperties = {
   transition: 'opacity 0.2s ease',
 };
 
-const contentStyle: React.CSSProperties = {
+const contentStyle = {
   flex: 1,
   padding: spacing.lg,
   display: 'flex',
@@ -55,7 +55,7 @@ const contentStyle: React.CSSProperties = {
   gap: spacing.sm,
 };
 
-const userCardStyle: React.CSSProperties = {
+const userCardStyle = {
   background: gradients.card,
   borderRadius: borderRadius.md,
   padding: spacing.md,
@@ -65,33 +65,33 @@ const userCardStyle: React.CSSProperties = {
   border: '1px solid rgba(255, 114, 35, 0.2)',
 };
 
-const userInfoStyle: React.CSSProperties = {
+const userInfoStyle = {
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   gap: spacing.xs,
 };
 
-const userNameStyle: React.CSSProperties = {
+const userNameStyle = {
   fontSize: 15,
   fontWeight: 600,
   color: colors.text,
   margin: 0,
 };
 
-const badgesStyle: React.CSSProperties = {
+const badgesStyle = {
   display: 'flex',
   gap: spacing.xs,
   flexWrap: 'wrap',
 };
 
-const userActionsStyle: React.CSSProperties = {
+const userActionsStyle = {
   display: 'flex',
   flexDirection: 'column',
   gap: spacing.xs,
 };
 
-const actionButtonStyle: React.CSSProperties = {
+const actionButtonStyle = {
   padding: '6px 14px',
   borderRadius: borderRadius.sm,
   border: 'none',
@@ -103,7 +103,7 @@ const actionButtonStyle: React.CSSProperties = {
   transition: 'opacity 0.2s ease',
 };
 
-const ManageUsersScreen: React.FC = () => {
+const ManageUsersScreen = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,8 +117,10 @@ const ManageUsersScreen: React.FC = () => {
     try {
       const data = await userService.getAllUsers();
       setUsers(data);
-      setAdminCount(data.filter(u => u.role === 'admin').length);
-      setUserCount(data.filter(u => u.role !== 'admin').length);
+      const admins = data.filter(u => u.role === 'admin').length;
+      const regulars = data.filter(u => u.role !== 'admin').length;
+      setAdminCount(admins);
+      setUserCount(regulars);
     } catch {
       console.error('Error loading users');
     } finally {
@@ -130,9 +132,9 @@ const ManageUsersScreen: React.FC = () => {
     loadUsers();
   }, []);
 
-  const isSuperAdmin = (u: AppUser) => u.displayName === SUPER_ADMIN_NAME;
+  const isSuperAdmin = (u) => u.displayName === SUPER_ADMIN_NAME;
 
-  const handleToggleActive = async (u: AppUser) => {
+  const handleToggleActive = async (u) => {
     if (isSuperAdmin(u)) {
       window.alert('No se puede desactivar al administrador principal');
       return;
@@ -142,14 +144,14 @@ const ManageUsersScreen: React.FC = () => {
       setUsers((prev) =>
         prev.map((x) => (x.id === u.id ? { ...x, active: !x.active } : x))
       );
-      setAdminCount(prev => prev.filter(u => u.role === 'admin').length);
-      setUserCount(prev => prev.filter(u => u.role !== 'admin').length);
+      setAdminCount((prev) => prev.filter((u) => u.role === 'admin').length);
+      setUserCount((prev) => prev.filter((u) => u.role !== 'admin').length);
     } catch {
       console.error('Error toggling user active status');
     }
   };
 
-  const handleDelete = async (u: AppUser) => {
+  const handleDelete = async (u) => {
     if (isSuperAdmin(u)) {
       window.alert('No se puede eliminar al administrador principal');
       return;
@@ -158,15 +160,16 @@ const ManageUsersScreen: React.FC = () => {
     try {
       await userService.deleteUser(u.id);
       setUsers((prev) => prev.filter((x) => x.id !== u.id));
-      setAdminCount(prev => prev.filter(u => u.role === 'admin').length);
-      setUserCount(prev => prev.filter(u => u.role !== 'admin').length);
-    } catch (e: any) {
+      setAdminCount((prev) => prev.filter((u) => u.role === 'admin').length);
+      setUserCount((prev) => prev.filter((u) => u.role !== 'admin').length);
+    } catch (e) {
       alert('Error: ' + (e.message || String(e)));
     }
   };
 
   return (
     <div style={pageStyle}>
+      {/* Header: solo título y flecha, SIN botones de filtro */}
       <div style={{
         backgroundColor: colors.surface,
         padding: `${spacing.md}px ${spacing.lg}px`,
@@ -179,10 +182,24 @@ const ManageUsersScreen: React.FC = () => {
         <button style={{ background: 'none', border: 'none', color: colors.primary, fontSize: 28, fontWeight: 700, cursor: 'pointer' }} onClick={() => navigate('/admin')}>‹</button>
         <h1 style={titleStyle}>Gestionar usuarios</h1>
       </div>
+
+      {/* Área principal: aquí están los botones de filtro ABAJO del título */}
       <div style={contentStyle}>
         <div style={{ display: 'flex', gap: spacing.sm, marginTop: spacing.sm }}>
           <button
-            style={{ padding: '8px 16px', borderRadius: borderRadius.md, border: filter === 'all' ? `2px solid ${colors.primary}` : 'none', background: filter === 'all' ? colors.primary : 'transparent', color: filter === 'all' ? '#FEF5E6' : colors.textSecondary, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s ease' }}
+            style={{
+              padding: '8px 16px',
+              borderRadius: borderRadius.md,
+              border: filter === 'all' ? `2px solid ${colors.primary}` : 'none',
+              background: filter === 'all' ? colors.primary : 'transparent',
+              color: filter === 'all' ? '#FEF5E6' : colors.textSecondary,
+              fontWeight: 600,
+              fontSize: 12,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease',
+            }}
             onClick={() => {
               setFilter('all');
               setShowList(true);
@@ -191,7 +208,19 @@ const ManageUsersScreen: React.FC = () => {
             Usuarios Totales: {users.length}
           </button>
           <button
-            style={{ padding: '8px 16px', borderRadius: borderRadius.md, border: filter === 'users' ? `2px solid ${colors.primary}` : 'none', background: filter === 'users' ? colors.primary : 'transparent', color: filter === 'users' ? '#FEF5E6' : colors.textSecondary, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s ease' }}
+            style={{
+              padding: '8px 16px',
+              borderRadius: borderRadius.md,
+              border: filter === 'users' ? `2px solid ${colors.primary}` : 'none',
+              background: filter === 'users' ? colors.primary : 'transparent',
+              color: filter === 'users' ? '#FEF5E6' : colors.textSecondary,
+              fontWeight: 600,
+              fontSize: 12,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease',
+            }}
             onClick={() => {
               setFilter('users');
               setShowList(true);
@@ -200,7 +229,19 @@ const ManageUsersScreen: React.FC = () => {
             Usuarios: {userCount}
           </button>
           <button
-            style={{ padding: '8px 16px', borderRadius: borderRadius.md, border: filter === 'admins' ? `2px solid ${colors.primary}` : 'none', background: filter === 'admins' ? colors.primary : 'transparent', color: filter === 'admins' ? '#FEF5E6' : colors.textSecondary, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'all 0.2s ease' }}
+            style={{
+              padding: '8px 16px',
+              borderRadius: borderRadius.md,
+              border: filter === 'admins' ? `2px solid ${colors.primary}` : 'none',
+              background: filter === 'admins' ? colors.primary : 'transparent',
+              color: filter === 'admins' ? '#FEF5E6' : colors.textSecondary,
+              fontWeight: 600,
+              fontSize: 12,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease',
+            }}
             onClick={() => {
               setFilter('admins');
               setShowList(true);
@@ -209,6 +250,8 @@ const ManageUsersScreen: React.FC = () => {
             Administradores: {adminCount}
           </button>
         </div>
+
+        {/* Lista: solo muestra si showList es true */}
         {showList ? (
           users
             .filter((u) => {
