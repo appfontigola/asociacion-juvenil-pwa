@@ -9,7 +9,6 @@ import {
   onSnapshot,
   query,
   where,
-  orderBy,
   limit,
   Timestamp,
   Unsubscribe,
@@ -108,7 +107,7 @@ export const subscribeToPasajePresence = (
 export const getPasajeLog = async (date: string): Promise<PasajeLogEntry[]> => {
   const db = getDb();
   const snapshot = await getDocs(
-    query(collection(db, LOG_COLLECTION), where('date', '==', date), orderBy('entryTime', 'asc'))
+    query(collection(db, LOG_COLLECTION), where('date', '==', date))
   );
   return snapshot.docs.map(mapLogDoc);
 };
@@ -118,7 +117,7 @@ export const subscribeToPasajeLog = (
   callback: (entries: PasajeLogEntry[]) => void
 ): Unsubscribe => {
   const db = getDb();
-  const q = query(collection(db, LOG_COLLECTION), where('date', '==', date), orderBy('entryTime', 'asc'));
+  const q = query(collection(db, LOG_COLLECTION), where('date', '==', date));
   return onSnapshot(q, (snapshot) => {
     callback(snapshot.docs.map(mapLogDoc));
   });
@@ -133,8 +132,7 @@ export const subscribeToPasajeLogByUser = (
   const db = getDb();
   const q = query(
     collection(db, LOG_COLLECTION),
-    where('userId', '==', userId),
-    orderBy('date', 'asc')
+    where('userId', '==', userId)
   );
   return onSnapshot(q, (snapshot) => {
     const entries = snapshot.docs

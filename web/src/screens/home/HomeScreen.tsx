@@ -96,7 +96,7 @@ const cardThemes: { gradient: string; icon: string }[] = [
   { gradient: 'linear-gradient(135deg, #FEBE0F 0%, #FF7223 100%)', icon: '\uD83D\uDCE2' },
   { gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FF7223 100%)', icon: '\uD83D\uDCC5' },
   { gradient: 'linear-gradient(135deg, #02AF77 0%, #4E8ABC 100%)', icon: '\uD83D\uDCCD' },
-  { gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FEBE0F 100%)', icon: '\uD83C\uDFAB' },
+  { gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FEBE0F 100%)', icon: '👻' },
   { gradient: 'linear-gradient(135deg, #4E8ABC 0%, #0B151D 100%)', icon: '\uD83D\uDC64' },
   { gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)', icon: '\u2753' },
   { gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)', icon: '\uD83D\uDEE0\uFE0F' },
