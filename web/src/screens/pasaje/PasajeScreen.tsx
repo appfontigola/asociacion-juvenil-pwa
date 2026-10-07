@@ -6,7 +6,6 @@ import UserPresenceCard from '../../components/local/UserPresenceCard';
 import EmptyState from '../../components/ui/EmptyState';
 import Loading from '../../components/ui/Loading';
 import { colors, spacing, borderRadius, typography, gradients } from '../../constants/theme';
-import { SUPER_ADMIN_NAME } from '../../constants/config';
 
 const pageStyle: React.CSSProperties = {
   flex: 1,
@@ -103,21 +102,6 @@ const toggleButtonStyle: React.CSSProperties = {
   transition: 'opacity 0.2s ease',
 };
 
-const logButtonStyle: React.CSSProperties = {
-  background: gradients.card,
-  borderRadius: borderRadius.lg,
-  padding: spacing.lg,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: spacing.md,
-  border: '1px solid rgba(255, 114, 35, 0.22)',
-  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
-  cursor: 'pointer',
-  width: '100%',
-  fontFamily: 'inherit',
-};
-
 const userListStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -134,7 +118,6 @@ const PasajeScreen: React.FC = () => {
   const currentPhotoURL = user?.photoURL;
 
   const isInPasaje = activeUsers.some((u) => u.userId === currentUserId);
-  const isAdmin = user?.displayName === SUPER_ADMIN_NAME || user?.role === 'admin';
 
   const handleToggle = () => {
     if (!currentUserId) return;
@@ -189,21 +172,6 @@ const PasajeScreen: React.FC = () => {
             {isInPasaje ? 'Salir del pasaje' : 'Estoy en el pasaje'}
           </button>
         </div>
-
-        {isAdmin && (
-          <button
-            style={logButtonStyle}
-            onClick={() => navigate('/admin/pasaje-log')}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; }}
-          >
-            <div style={toggleInfoStyle}>
-              <span style={toggleIconStyle}>📋</span>
-              <p style={toggleLabelStyle}>Registro de asistencia</p>
-            </div>
-            <span style={{ color: colors.primary, fontSize: 20 }}>›</span>
-          </button>
-        )}
 
         <h3 style={sectionTitleStyle}>Personas en el pasaje</h3>
         {activeUsers.length === 0 ? (

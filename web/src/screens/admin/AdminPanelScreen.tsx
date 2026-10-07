@@ -97,6 +97,7 @@ const adminActions: { label: string; icon: string; route: string }[] = [
   { label: 'Registro local', icon: '📋', route: '/admin/local-log' },
   { label: 'Registro llaves', icon: '🔑', route: '/admin/keys-log' },
   { label: 'Registro alarma', icon: '🚨', route: '/admin/alarm-log' },
+  { label: 'Registro pasaje', icon: '👻', route: '/admin/pasaje-log' },
 ];
 
 const AdminPanelScreen: React.FC = () => {
