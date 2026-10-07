@@ -30,6 +30,8 @@ import KeysLogScreen from './screens/admin/KeysLogScreen';
 import AlarmLogScreen from './screens/admin/AlarmLogScreen';
 import ManualScreen from './screens/help/ManualScreen';
 import ShoppingListScreen from './screens/local/ShoppingListScreen';
+import PasajeScreen from './screens/pasaje/PasajeScreen';
+import PasajeLogScreen from './screens/admin/PasajeLogScreen';
 import DropboxConnectScreen from './screens/admin/DropboxConnectScreen';
 import TabLayout from './components/TabLayout';
 import InstallPage from './components/InstallPage';
@@ -111,6 +113,7 @@ const App: React.FC = () => {
           <Route path="/notices" element={<NoticesListScreen />} />
           <Route path="/calendar" element={<CalendarScreen />} />
           <Route path="/local" element={<LocalScreen />} />
+          <Route path="/pasaje" element={<PasajeScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/admin" element={<AdminPanelScreen />} />
         </Route>
@@ -133,6 +136,7 @@ const App: React.FC = () => {
         <Route path="/admin/payments" element={<ProtectedRoute><PaymentsScreen /></ProtectedRoute>} />
         <Route path="/admin/qr" element={<ProtectedRoute><QRScreen /></ProtectedRoute>} />
         <Route path="/admin/local-log" element={<ProtectedRoute><LocalLogScreen /></ProtectedRoute>} />
+        <Route path="/admin/pasaje-log" element={<ProtectedRoute><PasajeLogScreen /></ProtectedRoute>} />
         <Route path="/admin/keys-log" element={<ProtectedRoute><KeysLogScreen /></ProtectedRoute>} />
         <Route path="/admin/alarm-log" element={<ProtectedRoute><AlarmLogScreen /></ProtectedRoute>} />
         <Route path="/admin/dropbox" element={<ProtectedRoute><DropboxConnectScreen /></ProtectedRoute>} />
