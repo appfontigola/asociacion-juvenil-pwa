@@ -156,7 +156,7 @@ const PasajeScreen: React.FC = () => {
       <div style={contentStyle}>
         <div style={toggleCardStyle}>
           <div style={toggleInfoStyle}>
-            <span style={toggleIconStyle}>🎫</span>
+            <span style={toggleIconStyle}>🎃</span>
             <p style={toggleLabelStyle}>¿Estás en el pasaje?</p>
           </div>
           <button
