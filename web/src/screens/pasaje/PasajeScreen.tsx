@@ -232,7 +232,7 @@ const PasajeScreen: React.FC = () => {
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
             >
-              🎬 Ver vídeos
+              🎬 Ver videos
             </button>
           </div>
         )}
