@@ -125,6 +125,16 @@ const videoPlayerStyle: React.CSSProperties = {
   backgroundColor: '#0B151D',
 };
 
+const toDirectUrl = (url: string): string => {
+  if (url.includes('dl.dropboxusercontent.com')) return url;
+  return url
+    .replace('www.dropbox.com', 'dl.dropboxusercontent.com')
+    .replace('dropbox.com', 'dl.dropboxusercontent.com')
+    .replace(/[?&]dl=0/, '?dl=1')
+    .replace(/\?dl=1&/, '?')
+    .replace(/&dl=1/, '');
+};
+
 const playButtonStyle: React.CSSProperties = {
   ...typography.body,
   backgroundColor: colors.primary,
@@ -218,7 +228,7 @@ const PasajeVideosScreen: React.FC = () => {
                       </div>
                     </div>
                     {playingId === v.id ? (
-                      <video src={v.videoUrl} controls autoPlay style={videoPlayerStyle} />
+                      <video src={toDirectUrl(v.videoUrl)} controls autoPlay style={videoPlayerStyle} />
                     ) : (
                       <button style={playButtonStyle} onClick={() => setPlayingId(v.id)}>
                         ▶ Ver vídeo
