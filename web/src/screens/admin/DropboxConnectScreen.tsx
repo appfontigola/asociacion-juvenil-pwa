@@ -112,6 +112,15 @@ const DropboxConnectScreen: React.FC = () => {
               : 'Conecta tu Dropbox una sola vez para que los vídeos de la alarma se suban automáticamente.'}
           </p>
 
+          {connected && (
+            <Button
+              title="Reconectar Dropbox"
+              size="md"
+              variant="secondary"
+              onPress={handleConnect}
+            />
+          )}
+
           {!connected && (
             <Button
               title="Conectar Dropbox"
