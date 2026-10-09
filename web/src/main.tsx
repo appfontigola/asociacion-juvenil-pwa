@@ -29,7 +29,7 @@ if ('serviceWorker' in navigator) {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               if (window.confirm('Hay una actualización disponible. ¿Recargar?')) {
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
-                window.location.reload();
+                window.location.href = window.location.pathname + '?v=' + Date.now();
               }
             }
           });

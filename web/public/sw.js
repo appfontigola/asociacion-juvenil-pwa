@@ -1,5 +1,5 @@
-/* v1.4.0 - Static SW for iOS compatibility */
-const CACHE_NAME = 'asoc-v2';
+/* v1.5.0 - Static SW for iOS compatibility */
+const CACHE_NAME = 'asoc-v3';
 const PRECACHE_URLS = [];
 
 self.addEventListener('install', (event) => {
@@ -27,6 +27,18 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('firestore.googleapis.com')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
     );
   }
 });
