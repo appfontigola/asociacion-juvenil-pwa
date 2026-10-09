@@ -21,6 +21,23 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/asociacion-juvenil-pwa/sw.js', { scope: '/asociacion-juvenil-pwa/' })
+      .then((reg) => {
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              if (window.confirm('Hay una actualización disponible. ¿Recargar?')) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              }
+            }
+          });
+        });
+      })
       .catch(() => {});
+    setInterval(() => {
+      navigator.serviceWorker.getRegistration('/asociacion-juvenil-pwa/').then((r) => r?.update()).catch(() => {});
+    }, 60000);
   });
 }
