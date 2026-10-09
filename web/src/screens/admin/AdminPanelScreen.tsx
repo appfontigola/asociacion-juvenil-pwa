@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { colors, spacing, borderRadius, typography, gradients } from '../../constants/theme';
+import { deleteAllPasajeVideos } from '../../services/pasajeVideoService';
 
 const pageStyle: React.CSSProperties = {
   flex: 1,
@@ -103,6 +104,20 @@ const adminActions: { label: string; icon: string; route: string }[] = [
 
 const AdminPanelScreen: React.FC = () => {
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteVideos = async () => {
+    if (!window.confirm('¿Borrar todos los vídeos del pasaje?')) return;
+    setDeleting(true);
+    try {
+      const count = await deleteAllPasajeVideos();
+      window.alert(`Se han borrado ${count} vídeos.`);
+    } catch {
+      window.alert('Error al borrar los vídeos.');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div style={pageStyle}>
@@ -126,6 +141,26 @@ const AdminPanelScreen: React.FC = () => {
             </button>
           ))}
         </div>
+
+        <button
+          style={{
+            marginTop: spacing.lg,
+            padding: '12px 20px',
+            borderRadius: borderRadius.md,
+            border: '2px solid #E53935',
+            backgroundColor: 'transparent',
+            color: '#E53935',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            opacity: deleting ? 0.5 : 1,
+          }}
+          onClick={handleDeleteVideos}
+          disabled={deleting}
+        >
+          {deleting ? 'Borrando...' : '🗑️ Borrar todos los vídeos del pasaje'}
+        </button>
       </div>
     </div>
   );

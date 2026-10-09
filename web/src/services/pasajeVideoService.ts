@@ -1,6 +1,8 @@
 import {
   collection,
   addDoc,
+  deleteDoc,
+  getDocs,
   query,
   onSnapshot,
   Timestamp,
@@ -60,4 +62,12 @@ export const subscribeToPasajeVideos = (
     entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     callback(entries);
   });
+};
+
+export const deleteAllPasajeVideos = async (): Promise<number> => {
+  const db = getDb();
+  const snapshot = await getDocs(collection(db, COLLECTION));
+  const batch = snapshot.docs.map((d) => deleteDoc(d.ref));
+  await Promise.all(batch);
+  return snapshot.size;
 };
