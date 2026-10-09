@@ -8,7 +8,6 @@ import {
   subscribeToPasajeVideos,
   PasajeVideoEntry,
 } from '../../services/pasajeVideoService';
-import { downloadDropboxFile } from '../../services/dropboxService';
 
 const pageStyle: React.CSSProperties = {
   flex: 1,
@@ -119,23 +118,6 @@ const timeStyle: React.CSSProperties = {
   margin: 0,
 };
 
-const videoPlayerStyle: React.CSSProperties = {
-  width: '100%',
-  maxHeight: 400,
-  borderRadius: borderRadius.md,
-  backgroundColor: '#0B151D',
-};
-
-const toDirectUrl = (url: string): string => {
-  if (url.includes('dl.dropboxusercontent.com')) return url;
-  return url
-    .replace('www.dropbox.com', 'dl.dropboxusercontent.com')
-    .replace('dropbox.com', 'dl.dropboxusercontent.com')
-    .replace(/[?&]dl=0/, '?dl=1')
-    .replace(/\?dl=1&/, '?')
-    .replace(/&dl=1/, '');
-};
-
 const playButtonStyle: React.CSSProperties = {
   ...typography.body,
   backgroundColor: colors.primary,
@@ -169,9 +151,6 @@ const PasajeVideosScreen: React.FC = () => {
   const { user } = useAuth();
   const [videos, setVideos] = useState<PasajeVideoEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [playingId, setPlayingId] = useState<string | null>(null);
-  const [playingUrl, setPlayingUrl] = useState<string | null>(null);
-  const [loadingVideo, setLoadingVideo] = useState<string | null>(null);
 
   useEffect(() => {
     const unsub = subscribeToPasajeVideos((entries) => {
@@ -180,30 +159,6 @@ const PasajeVideosScreen: React.FC = () => {
     });
     return () => unsub();
   }, []);
-
-  const handlePlay = async (v: PasajeVideoEntry) => {
-    if (playingId === v.id) {
-      setPlayingId(null);
-      setPlayingUrl(null);
-      return;
-    }
-    setLoadingVideo(v.id);
-    try {
-      let url: string;
-      if (v.dropboxPath) {
-        url = await downloadDropboxFile(v.dropboxPath);
-      } else {
-        url = toDirectUrl(v.videoUrl);
-      }
-      if (playingUrl) URL.revokeObjectURL(playingUrl);
-      setPlayingUrl(url);
-      setPlayingId(v.id);
-    } catch {
-      window.alert('No se pudo cargar el vídeo.');
-    } finally {
-      setLoadingVideo(null);
-    }
-  };
 
   const grouped: { date: string; items: PasajeVideoEntry[] }[] = [];
   for (const v of videos) {
@@ -254,17 +209,18 @@ const PasajeVideosScreen: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    {playingId === v.id && playingUrl ? (
-                      <video src={playingUrl} controls autoPlay style={videoPlayerStyle} />
-                    ) : (
-                      <button
-                        style={{ ...playButtonStyle, opacity: loadingVideo === v.id ? 0.5 : 1 }}
-                        onClick={() => handlePlay(v)}
-                        disabled={loadingVideo === v.id}
-                      >
-                        {loadingVideo === v.id ? '⏳ Cargando...' : '▶ Ver vídeo'}
-                      </button>
-                    )}
+                    <a
+                      href={v.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        ...playButtonStyle,
+                        textDecoration: 'none',
+                        display: 'inline-block',
+                      }}
+                    >
+                      ▶ Ver vídeo en Dropbox
+                    </a>
                   </div>
                 ))}
               </div>
