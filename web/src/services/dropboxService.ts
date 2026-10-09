@@ -63,7 +63,7 @@ export const startOAuthFlow = async (): Promise<void> => {
     code_challenge: challenge,
     code_challenge_method: 'S256',
     state,
-    scope: 'files.content.write sharing.write',
+    scope: 'files.content.write files.content.read sharing.write',
     redirect_uri: getDropboxRedirectUri(),
   });
 
