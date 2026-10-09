@@ -216,26 +216,24 @@ const PasajeScreen: React.FC = () => {
           </button>
         </div>
 
-        {isInPasaje && (
-          <div style={videoButtonsRowStyle}>
-            <button
-              style={{ ...videoButtonStyle, backgroundColor: colors.primary, color: '#FEF5E6' }}
-              onClick={() => setVideoModalOpen(true)}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-            >
-              📹 Subir vídeo
-            </button>
-            <button
-              style={{ ...videoButtonStyle, backgroundColor: colors.surfaceLight, color: colors.primary }}
-              onClick={() => navigate('/pasaje/videos')}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-            >
-              🎬 Ver videos
-            </button>
-          </div>
-        )}
+        <div style={videoButtonsRowStyle}>
+          <button
+            style={{ ...videoButtonStyle, backgroundColor: colors.primary, color: '#FEF5E6' }}
+            onClick={() => setVideoModalOpen(true)}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+          >
+            📹 Subir vídeo
+          </button>
+          <button
+            style={{ ...videoButtonStyle, backgroundColor: colors.surfaceLight, color: colors.primary }}
+            onClick={() => navigate('/pasaje/videos')}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+          >
+            🎬 Ver videos
+          </button>
+        </div>
 
         <h3 style={sectionTitleStyle}>Personas en el pasaje</h3>
         {activeUsers.length === 0 ? (
