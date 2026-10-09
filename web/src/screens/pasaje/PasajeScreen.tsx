@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { usePasajePresence } from '../../hooks/usePasajePresence';
 import UserPresenceCard from '../../components/local/UserPresenceCard';
 import EmptyState from '../../components/ui/EmptyState';
 import Loading from '../../components/ui/Loading';
+import UploadVideoModal from '../../components/pasaje/UploadVideoModal';
+import { uploadVideoToDropbox } from '../../services/dropboxService';
+import { addPasajeVideo } from '../../services/pasajeVideoService';
 import { colors, spacing, borderRadius, typography, gradients } from '../../constants/theme';
 
 const pageStyle: React.CSSProperties = {
@@ -108,10 +111,30 @@ const userListStyle: React.CSSProperties = {
   gap: spacing.sm,
 };
 
+const videoButtonsRowStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: spacing.sm,
+};
+
+const videoButtonStyle: React.CSSProperties = {
+  flex: 1,
+  padding: '10px 16px',
+  borderRadius: borderRadius.md,
+  border: 'none',
+  fontWeight: 600,
+  fontSize: 14,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  whiteSpace: 'nowrap',
+  transition: 'opacity 0.2s ease',
+};
+
 const PasajeScreen: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { activeUsers, loading, enterPasaje, leavePasaje } = usePasajePresence();
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const currentUserId = user?.id;
   const currentUserName = user?.displayName || '';
@@ -125,6 +148,26 @@ const PasajeScreen: React.FC = () => {
       leavePasaje(currentUserId);
     } else {
       enterPasaje(currentUserId, currentUserName, currentPhotoURL);
+    }
+  };
+
+  const handleUploadVideo = async (video: File) => {
+    if (!currentUserId) return;
+    setUploading(true);
+    try {
+      const videoUrl = await uploadVideoToDropbox(video, '/pasaje-2026');
+      await addPasajeVideo({
+        userId: currentUserId,
+        userName: currentUserName,
+        userPhotoURL: currentPhotoURL,
+        videoName: video.name,
+        videoUrl,
+      });
+      setVideoModalOpen(false);
+    } catch {
+      window.alert('No se pudo subir el vídeo. Inténtalo de nuevo.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -173,6 +216,27 @@ const PasajeScreen: React.FC = () => {
           </button>
         </div>
 
+        {isInPasaje && (
+          <div style={videoButtonsRowStyle}>
+            <button
+              style={{ ...videoButtonStyle, backgroundColor: colors.primary, color: '#FEF5E6' }}
+              onClick={() => setVideoModalOpen(true)}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+            >
+              📹 Subir vídeo
+            </button>
+            <button
+              style={{ ...videoButtonStyle, backgroundColor: colors.surfaceLight, color: colors.primary }}
+              onClick={() => navigate('/pasaje/videos')}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+            >
+              🎬 Ver vídeos
+            </button>
+          </div>
+        )}
+
         <h3 style={sectionTitleStyle}>Personas en el pasaje</h3>
         {activeUsers.length === 0 ? (
           <EmptyState title="No hay nadie en el pasaje" message="Parece que no hay nadie en este momento." />
@@ -184,6 +248,13 @@ const PasajeScreen: React.FC = () => {
           </div>
         )}
       </div>
+
+      <UploadVideoModal
+        open={videoModalOpen}
+        saving={uploading}
+        onCancel={() => setVideoModalOpen(false)}
+        onSave={handleUploadVideo}
+      />
     </div>
   );
 };

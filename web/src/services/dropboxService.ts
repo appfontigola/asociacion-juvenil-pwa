@@ -6,6 +6,7 @@ const TOKEN_ENDPOINT = 'https://api.dropboxapi.com/oauth2/token';
 const UPLOAD_ENDPOINT = 'https://content.dropboxapi.com/2/files/upload';
 const SHARE_ENDPOINT =
   'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings';
+const LIST_LINKS_ENDPOINT = 'https://api.dropboxapi.com/2/sharing/list_shared_links';
 
 const CONFIG_REF = () => doc(getDb(), 'config', 'dropbox');
 const ACCESS_CACHE_KEY = '@dropbox_access';
@@ -133,11 +134,17 @@ const getAccessToken = async (): Promise<string> => {
   return data.access_token as string;
 };
 
-export const uploadVideoToDropbox = async (file: File): Promise<string> => {
+export const uploadVideoToDropbox = async (
+  file: File,
+  folderPath?: string
+): Promise<string> => {
   const accessToken = await getAccessToken();
   const baseName = file.name.replace(/[^\w.\-]/g, '_');
   const timestamp = Date.now();
-  const path = `/alarma_${timestamp}_${baseName}`;
+  const prefix = folderPath ? 'video' : 'alarma';
+  const path = folderPath
+    ? `${folderPath.replace(/\/$/, '')}/${prefix}_${timestamp}_${baseName}`
+    : `/${prefix}_${timestamp}_${baseName}`;
 
   const uploadRes = await fetch(UPLOAD_ENDPOINT, {
     method: 'POST',
@@ -158,8 +165,25 @@ export const uploadVideoToDropbox = async (file: File): Promise<string> => {
     },
     body: JSON.stringify({ path, settings: { requested_visibility: 'public' } }),
   });
-  if (!shareRes.ok) throw new Error('Error al crear enlace compartido');
+  if (shareRes.ok) {
+    const shareData = await shareRes.json();
+    return shareData.url as string;
+  }
 
-  const shareData = await shareRes.json();
-  return shareData.url as string;
+  const errBody = await shareRes.json().catch(() => null);
+  if (errBody?.error_summary?.startsWith('sharing.shared_link_already_exists')) {
+    const listRes = await fetch(LIST_LINKS_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ path, direct_only: true }),
+    });
+    if (listRes.ok) {
+      const listData = await listRes.json();
+      if (listData.links?.length) return listData.links[0].url as string;
+    }
+  }
+  throw new Error('Error al crear enlace compartido');
 };

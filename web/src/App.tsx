@@ -31,6 +31,7 @@ import AlarmLogScreen from './screens/admin/AlarmLogScreen';
 import ManualScreen from './screens/help/ManualScreen';
 import ShoppingListScreen from './screens/local/ShoppingListScreen';
 import PasajeScreen from './screens/pasaje/PasajeScreen';
+import PasajeVideosScreen from './screens/pasaje/PasajeVideosScreen';
 import PasajeLogScreen from './screens/admin/PasajeLogScreen';
 import DropboxConnectScreen from './screens/admin/DropboxConnectScreen';
 import TabLayout from './components/TabLayout';
@@ -117,6 +118,7 @@ const App: React.FC = () => {
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/admin" element={<AdminPanelScreen />} />
         </Route>
+        <Route path="/pasaje/videos" element={<ProtectedRoute><PasajeVideosScreen /></ProtectedRoute>} />
         <Route path="/notices/detail/:noticeId" element={<ProtectedRoute><NoticeDetailScreen /></ProtectedRoute>} />
         <Route path="/notices/create" element={<ProtectedRoute><CreateNoticeScreen /></ProtectedRoute>} />
         <Route path="/notices/edit/:noticeId" element={<ProtectedRoute><EditNoticeScreen /></ProtectedRoute>} />
