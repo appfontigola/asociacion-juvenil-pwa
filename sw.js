@@ -1,12 +1,17 @@
-/* v1.3.1 - Static SW for iOS compatibility */
-const CACHE_NAME = 'asoc-v1';
+/* v1.4.0 - Static SW for iOS compatibility */
+const CACHE_NAME = 'asoc-v2';
 const PRECACHE_URLS = [];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).catch(() => {})
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', (event) => {
