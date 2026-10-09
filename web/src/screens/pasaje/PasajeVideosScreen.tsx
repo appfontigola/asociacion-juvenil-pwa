@@ -8,6 +8,7 @@ import {
   subscribeToPasajeVideos,
   PasajeVideoEntry,
 } from '../../services/pasajeVideoService';
+import { downloadDropboxFile } from '../../services/dropboxService';
 
 const pageStyle: React.CSSProperties = {
   flex: 1,
@@ -169,6 +170,8 @@ const PasajeVideosScreen: React.FC = () => {
   const [videos, setVideos] = useState<PasajeVideoEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [playingUrl, setPlayingUrl] = useState<string | null>(null);
+  const [loadingVideo, setLoadingVideo] = useState<string | null>(null);
 
   useEffect(() => {
     const unsub = subscribeToPasajeVideos((entries) => {
@@ -177,6 +180,30 @@ const PasajeVideosScreen: React.FC = () => {
     });
     return () => unsub();
   }, []);
+
+  const handlePlay = async (v: PasajeVideoEntry) => {
+    if (playingId === v.id) {
+      setPlayingId(null);
+      setPlayingUrl(null);
+      return;
+    }
+    setLoadingVideo(v.id);
+    try {
+      let url: string;
+      if (v.dropboxPath) {
+        url = await downloadDropboxFile(v.dropboxPath);
+      } else {
+        url = toDirectUrl(v.videoUrl);
+      }
+      if (playingUrl) URL.revokeObjectURL(playingUrl);
+      setPlayingUrl(url);
+      setPlayingId(v.id);
+    } catch {
+      window.alert('No se pudo cargar el vídeo.');
+    } finally {
+      setLoadingVideo(null);
+    }
+  };
 
   const grouped: { date: string; items: PasajeVideoEntry[] }[] = [];
   for (const v of videos) {
@@ -227,11 +254,15 @@ const PasajeVideosScreen: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    {playingId === v.id ? (
-                      <video src={toDirectUrl(v.videoUrl)} controls autoPlay style={videoPlayerStyle} />
+                    {playingId === v.id && playingUrl ? (
+                      <video src={playingUrl} controls autoPlay style={videoPlayerStyle} />
                     ) : (
-                      <button style={playButtonStyle} onClick={() => setPlayingId(v.id)}>
-                        ▶ Ver vídeo
+                      <button
+                        style={{ ...playButtonStyle, opacity: loadingVideo === v.id ? 0.5 : 1 }}
+                        onClick={() => handlePlay(v)}
+                        disabled={loadingVideo === v.id}
+                      >
+                        {loadingVideo === v.id ? '⏳ Cargando...' : '▶ Ver vídeo'}
                       </button>
                     )}
                   </div>

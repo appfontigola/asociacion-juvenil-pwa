@@ -17,6 +17,7 @@ export interface PasajeVideoEntry {
   userPhotoURL?: string;
   videoName: string;
   videoUrl: string;
+  dropboxPath?: string;
   date: string;
   timestamp: Date;
 }
@@ -42,6 +43,7 @@ const mapDoc = (d: { id: string; data: () => Record<string, unknown> }): PasajeV
     userPhotoURL: (data.userPhotoURL as string) || undefined,
     videoName: data.videoName as string,
     videoUrl: data.videoUrl as string,
+    dropboxPath: data.dropboxPath as string | undefined,
     date: data.date as string,
     timestamp: (data.timestamp as Timestamp)?.toDate?.() || new Date(),
   };

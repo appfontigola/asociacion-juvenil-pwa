@@ -7,6 +7,7 @@ const UPLOAD_ENDPOINT = 'https://content.dropboxapi.com/2/files/upload';
 const SHARE_ENDPOINT =
   'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings';
 const LIST_LINKS_ENDPOINT = 'https://api.dropboxapi.com/2/sharing/list_shared_links';
+const DOWNLOAD_ENDPOINT = 'https://content.dropboxapi.com/2/files/download';
 
 const CONFIG_REF = () => doc(getDb(), 'config', 'dropbox');
 const ACCESS_CACHE_KEY = '@dropbox_access';
@@ -138,6 +139,14 @@ export const uploadVideoToDropbox = async (
   file: File,
   folderPath?: string
 ): Promise<string> => {
+  const result = await uploadVideoWithPath(file, folderPath);
+  return result.url;
+};
+
+export const uploadVideoWithPath = async (
+  file: File,
+  folderPath?: string
+): Promise<{ url: string; path: string }> => {
   const accessToken = await getAccessToken();
   const baseName = file.name.replace(/[^\w.\-]/g, '_');
   const timestamp = Date.now();
@@ -156,6 +165,8 @@ export const uploadVideoToDropbox = async (
     body: file,
   });
   if (!uploadRes.ok) throw new Error('Error al subir el vídeo a Dropbox');
+  const uploadData = await uploadRes.json();
+  const savedPath: string = uploadData.path_display || path;
 
   const shareRes = await fetch(SHARE_ENDPOINT, {
     method: 'POST',
@@ -163,11 +174,11 @@ export const uploadVideoToDropbox = async (
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ path, settings: { requested_visibility: 'public' } }),
+    body: JSON.stringify({ path: savedPath, settings: { requested_visibility: 'public' } }),
   });
   if (shareRes.ok) {
     const shareData = await shareRes.json();
-    return shareData.url as string;
+    return { url: shareData.url as string, path: savedPath };
   }
 
   const errBody = await shareRes.json().catch(() => null);
@@ -178,12 +189,26 @@ export const uploadVideoToDropbox = async (
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ path, direct_only: true }),
+      body: JSON.stringify({ path: savedPath, direct_only: true }),
     });
     if (listRes.ok) {
       const listData = await listRes.json();
-      if (listData.links?.length) return listData.links[0].url as string;
+      if (listData.links?.length) return { url: listData.links[0].url as string, path: savedPath };
     }
   }
   throw new Error('Error al crear enlace compartido');
+};
+
+export const downloadDropboxFile = async (path: string): Promise<string> => {
+  const accessToken = await getAccessToken();
+  const res = await fetch(DOWNLOAD_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Dropbox-API-Arg': JSON.stringify({ path }),
+    },
+  });
+  if (!res.ok) throw new Error('Error al descargar el vídeo');
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
 };

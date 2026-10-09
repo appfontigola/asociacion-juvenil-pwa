@@ -6,7 +6,7 @@ import UserPresenceCard from '../../components/local/UserPresenceCard';
 import EmptyState from '../../components/ui/EmptyState';
 import Loading from '../../components/ui/Loading';
 import UploadVideoModal from '../../components/pasaje/UploadVideoModal';
-import { uploadVideoToDropbox } from '../../services/dropboxService';
+import { uploadVideoWithPath } from '../../services/dropboxService';
 import { addPasajeVideo } from '../../services/pasajeVideoService';
 import { colors, spacing, borderRadius, typography, gradients } from '../../constants/theme';
 
@@ -155,13 +155,14 @@ const PasajeScreen: React.FC = () => {
     if (!currentUserId) return;
     setUploading(true);
     try {
-      const videoUrl = await uploadVideoToDropbox(video, '/pasaje-2026');
+      const { url, path } = await uploadVideoWithPath(video, '/pasaje-2026');
       await addPasajeVideo({
         userId: currentUserId,
         userName: currentUserName,
         userPhotoURL: currentPhotoURL,
         videoName: video.name,
-        videoUrl,
+        videoUrl: url,
+        dropboxPath: path,
       });
       setVideoModalOpen(false);
     } catch {
