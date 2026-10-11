@@ -83,7 +83,8 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({
 }) => {
   const [video, setVideo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -110,23 +111,45 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({
         {previewUrl && <video src={previewUrl} controls style={videoStyle} />}
         {video && !previewUrl && <p style={fileNameStyle}>{video.name}</p>}
         <input
-          ref={fileInputRef}
+          ref={galleryInputRef}
+          type="file"
+          accept="video/*"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+        <input
+          ref={cameraInputRef}
           type="file"
           accept="video/*"
           capture="environment"
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
-        <button
-          style={{
-            ...buttonBaseStyle,
-            backgroundColor: colors.surfaceLight,
-            color: colors.primary,
-          }}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          {video ? 'Cambiar vídeo' : 'Grabar / elegir vídeo'}
-        </button>
+        <div style={buttonRowStyle}>
+          <button
+            style={{
+              ...buttonBaseStyle,
+              backgroundColor: colors.surfaceLight,
+              color: colors.primary,
+            }}
+            onClick={() => galleryInputRef.current?.click()}
+          >
+            📁 Elegir de galería
+          </button>
+          <button
+            style={{
+              ...buttonBaseStyle,
+              backgroundColor: colors.surfaceLight,
+              color: colors.primary,
+            }}
+            onClick={() => cameraInputRef.current?.click()}
+          >
+            📷 Grabar vídeo
+          </button>
+        </div>
+        {video && (
+          <p style={fileNameStyle}>Seleccionado: {video.name}</p>
+        )}
         <div style={buttonRowStyle}>
           <button
             style={{
