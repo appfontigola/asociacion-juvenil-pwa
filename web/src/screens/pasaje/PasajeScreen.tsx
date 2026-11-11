@@ -178,7 +178,7 @@ const PasajeScreen: React.FC = () => {
         <div style={topBarStyle}>
           <button style={backButtonStyle} onClick={() => navigate('/')}>‹</button>
           <div>
-            <h1 style={topBarTitleStyle}>👻 Pasaje 2026</h1>
+            <h1 style={topBarTitleStyle}>👻 Pasaje</h1>
           </div>
         </div>
         <div style={contentStyle}>
@@ -193,7 +193,7 @@ const PasajeScreen: React.FC = () => {
       <div style={topBarStyle}>
         <button style={backButtonStyle} onClick={() => navigate('/')}>‹</button>
         <div>
-          <h1 style={topBarTitleStyle}>👻 Pasaje 2026</h1>
+          <h1 style={topBarTitleStyle}>👻 Pasaje</h1>
           <p style={subtitleStyle}>{activeUsers.length} personas en el pasaje</p>
         </div>
       </div>
