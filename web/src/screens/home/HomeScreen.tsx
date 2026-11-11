@@ -106,7 +106,7 @@ const normalCards = [
   { label: 'Avisos', route: '/notices' },
   { label: 'Calendario', route: '/calendar' },
   { label: 'Local', route: '/local' },
-  { label: 'Pasaje 2026', route: '/pasaje' },
+  { label: 'Pasaje', route: '/pasaje' },
   { label: 'Perfil', route: '/profile' },
   { label: 'Ayuda', route: '/manual' },
 ];
