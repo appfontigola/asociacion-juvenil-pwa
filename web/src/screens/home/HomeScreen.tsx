@@ -92,26 +92,16 @@ const bottomStyle: React.CSSProperties = {
   marginTop: 'auto',
 };
 
-const cardThemes: { gradient: string; icon: string }[] = [
-  { gradient: 'linear-gradient(135deg, #FEBE0F 0%, #FF7223 100%)', icon: '\uD83D\uDCE2' },
-  { gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FF7223 100%)', icon: '\uD83D\uDCC5' },
-  { gradient: 'linear-gradient(135deg, #02AF77 0%, #4E8ABC 100%)', icon: '\uD83D\uDCCD' },
-  { gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FEBE0F 100%)', icon: '👻' },
-  { gradient: 'linear-gradient(135deg, #4E8ABC 0%, #0B151D 100%)', icon: '\uD83D\uDC64' },
-  { gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)', icon: '\u2753' },
-  { gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)', icon: '\uD83D\uDEE0\uFE0F' },
-];
-
 const normalCards = [
-  { label: 'Avisos', route: '/notices' },
-  { label: 'Calendario', route: '/calendar' },
-  { label: 'Local', route: '/local' },
-  // { label: 'Pasaje', route: '/pasaje' }, // 👻 Ocultado de la home, sigue existiendo en /pasaje
-  { label: 'Perfil', route: '/profile' },
-  { label: 'Ayuda', route: '/manual' },
+  { label: 'Avisos', route: '/notices', icon: '\uD83D\uDCE2', gradient: 'linear-gradient(135deg, #FEBE0F 0%, #FF7223 100%)' },
+  { label: 'Calendario', route: '/calendar', icon: '\uD83D\uDCC5', gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FF7223 100%)' },
+  { label: 'Local', route: '/local', icon: '\uD83D\uDCCD', gradient: 'linear-gradient(135deg, #02AF77 0%, #4E8ABC 100%)' },
+  // { label: 'Pasaje', route: '/pasaje', icon: '👻', gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FEBE0F 100%)' }, // 👻 Ocultado de la home, sigue existiendo en /pasaje
+  { label: 'Perfil', route: '/profile', icon: '\uD83D\uDC64', gradient: 'linear-gradient(135deg, #4E8ABC 0%, #0B151D 100%)' },
+  { label: 'Ayuda', route: '/manual', icon: '\u2753', gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)' },
 ];
 
-const adminCard = { label: 'Panel Admin', route: '/admin' };
+const adminCard = { label: 'Panel Admin', route: '/admin', icon: '\uD83D\uDEE0\uFE0F', gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)' };
 
 const HomeScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -159,32 +149,29 @@ const HomeScreen: React.FC = () => {
           ¡Bienvenido, {user?.displayName || 'Usuario'}!
         </h2>
         <div style={gridStyle}>
-          {allCards.map((card, idx) => {
-            const theme = cardThemes[idx % cardThemes.length];
-            return (
-              <button
-                key={card.route}
-                className="animate-pop"
-                style={{
-                  ...cardStyle,
-                  background: theme.gradient,
-                  animationDelay: `${idx * 80}ms`,
-                }}
-                onClick={() => navigate(card.route)}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px) scale(1.02)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 28px rgba(255, 114, 35, 0.35)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0) scale(1)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.35)';
-                }}
-              >
-                <span style={cardIconWrapStyle}>{theme.icon}</span>
-                <span style={cardLabelStyle}>{card.label}</span>
-              </button>
-            );
-          })}
+          {allCards.map((card, idx) => (
+            <button
+              key={card.route}
+              className="animate-pop"
+              style={{
+                ...cardStyle,
+                background: card.gradient,
+                animationDelay: `${idx * 80}ms`,
+              }}
+              onClick={() => navigate(card.route)}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px) scale(1.02)';
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 28px rgba(255, 114, 35, 0.35)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(0) scale(1)';
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.35)';
+              }}
+            >
+              <span style={cardIconWrapStyle}>{card.icon}</span>
+              <span style={cardLabelStyle}>{card.label}</span>
+            </button>
+          ))}
         </div>
         {!subscribed && (
           <>
