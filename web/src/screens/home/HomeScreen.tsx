@@ -106,7 +106,7 @@ const normalCards = [
   { label: 'Avisos', route: '/notices' },
   { label: 'Calendario', route: '/calendar' },
   { label: 'Local', route: '/local' },
-  { label: 'Pasaje', route: '/pasaje' },
+  // { label: 'Pasaje', route: '/pasaje' }, // 👻 Ocultado de la home, sigue existiendo en /pasaje
   { label: 'Perfil', route: '/profile' },
   { label: 'Ayuda', route: '/manual' },
 ];
