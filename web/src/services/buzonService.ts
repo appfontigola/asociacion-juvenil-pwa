@@ -2,6 +2,7 @@ import {
   collection,
   doc,
   addDoc,
+  deleteDoc,
   getDocs,
   query,
   orderBy,
@@ -46,6 +47,11 @@ export const sendBuzonMessage = async (
     text,
     createdAt: new Date(),
   });
+};
+
+export const deleteBuzonMessage = async (id: string): Promise<void> => {
+  const db = getDb();
+  await deleteDoc(doc(db, COLLECTION, id));
 };
 
 export const getBuzonMessages = async (): Promise<BuzonMessage[]> => {
