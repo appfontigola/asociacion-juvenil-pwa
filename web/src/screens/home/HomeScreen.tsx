@@ -99,6 +99,7 @@ const normalCards = [
   // { label: 'Pasaje', route: '/pasaje', icon: '👻', gradient: 'linear-gradient(135deg, #FFA4BF 0%, #FEBE0F 100%)' }, // 👻 Ocultado de la home, sigue existiendo en /pasaje
   { label: 'Perfil', route: '/profile', icon: '\uD83D\uDC64', gradient: 'linear-gradient(135deg, #4E8ABC 0%, #0B151D 100%)' },
   { label: 'Ayuda', route: '/manual', icon: '\u2753', gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)' },
+  { label: 'Buzón de la asociación', route: '/buzon', icon: '\uD83D\uDCEC', gradient: 'linear-gradient(135deg, #02AF77 0%, #4E8ABC 100%)' },
 ];
 
 const adminCard = { label: 'Panel Admin', route: '/admin', icon: '\uD83D\uDEE0\uFE0F', gradient: 'linear-gradient(135deg, #FF7223 0%, #FEBE0F 100%)' };
