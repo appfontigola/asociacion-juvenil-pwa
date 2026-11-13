@@ -59,6 +59,17 @@ const formStyle: React.CSSProperties = {
   gap: spacing.md,
 };
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: spacing.md,
+  borderRadius: borderRadius.md,
+  border: `1px solid ${colors.border}`,
+  backgroundColor: colors.surface,
+  color: colors.text,
+  fontFamily: 'inherit',
+  fontSize: 16,
+};
+
 const textareaStyle: React.CSSProperties = {
   width: '100%',
   minHeight: 200,
@@ -101,18 +112,10 @@ const successStyle: React.CSSProperties = {
   textAlign: 'center',
 };
 
-const emptyStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: spacing.sm,
-  color: colors.textSecondary,
-};
-
 const BuzonScreen: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [asunto, setAsunto] = useState('');
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -122,11 +125,12 @@ const BuzonScreen: React.FC = () => {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim()) return;
+    if (!asunto.trim() || !text.trim()) return;
     setSending(true);
     try {
-      await sendBuzonMessage(userId, userName, text.trim());
+      await sendBuzonMessage(userId, userName, asunto.trim(), text.trim());
       setSent(true);
+      setAsunto('');
       setText('');
     } catch {
       window.alert('Error al enviar el mensaje. Inténtalo de nuevo.');
@@ -139,9 +143,9 @@ const BuzonScreen: React.FC = () => {
     return (
       <div style={pageStyle}>
         <div style={topBarStyle}>
-          <button style={backButtonStyle} onClick={() => navigate('/')}>&lt;</button>
+          <button style={backButtonStyle} onClick={() => navigate('/')}>{ '<' }</button>
           <div>
-            <h1 style={titleStyle}>Buzón de la asociación</h1>
+            <h1 style={titleStyle}>Buzón</h1>
           </div>
         </div>
         <div style={contentStyle}>
@@ -164,9 +168,9 @@ const BuzonScreen: React.FC = () => {
   return (
     <div style={pageStyle}>
       <div style={topBarStyle}>
-        <button style={backButtonStyle} onClick={() => navigate('/')}>&lt;</button>
+        <button style={backButtonStyle} onClick={() => navigate('/')}>{ '<' }</button>
         <div>
-          <h1 style={titleStyle}>Buzón de la asociación</h1>
+          <h1 style={titleStyle}>Buzón</h1>
         </div>
       </div>
       <div style={contentStyle}>
@@ -175,6 +179,13 @@ const BuzonScreen: React.FC = () => {
           Escribe tu consulta, sugerencia o incidencia. Te responderemos lo antes posible.
         </p>
         <form onSubmit={handleSend} style={formStyle}>
+          <input
+            style={inputStyle}
+            placeholder="Asunto"
+            value={asunto}
+            onChange={(e) => setAsunto(e.target.value)}
+            maxLength={100}
+          />
           <textarea
             style={textareaStyle}
             placeholder="Escribe aquí tu mensaje..."
@@ -184,7 +195,7 @@ const BuzonScreen: React.FC = () => {
           />
           <button
             style={sending ? buttonDisabledStyle : buttonStyle}
-            disabled={sending || !text.trim()}
+            disabled={sending || !asunto.trim() || !text.trim()}
             type="submit"
           >
             {sending ? 'Enviando...' : 'Enviar mensaje'}

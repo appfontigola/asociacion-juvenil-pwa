@@ -15,6 +15,7 @@ export interface BuzonMessage {
   id: string;
   userId: string;
   userName: string;
+  asunto: string;
   text: string;
   createdAt: Date;
 }
@@ -25,6 +26,7 @@ const mapBuzonDoc = (d: { id: string; data: () => Record<string, unknown> }): Bu
     id: d.id,
     userId: data.userId as string,
     userName: data.userName as string,
+    asunto: data.asunto as string,
     text: data.text as string,
     createdAt: (data.createdAt as Timestamp)?.toDate?.() || new Date(),
   };
@@ -33,12 +35,14 @@ const mapBuzonDoc = (d: { id: string; data: () => Record<string, unknown> }): Bu
 export const sendBuzonMessage = async (
   userId: string,
   userName: string,
+  asunto: string,
   text: string
 ): Promise<void> => {
   const db = getDb();
   await addDoc(collection(db, COLLECTION), {
     userId,
     userName,
+    asunto,
     text,
     createdAt: new Date(),
   });

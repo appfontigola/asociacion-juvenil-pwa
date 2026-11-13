@@ -65,6 +65,8 @@ const cardStyle: React.CSSProperties = {
   padding: spacing.lg,
   border: `1px solid ${colors.border}`,
   boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
+  cursor: 'pointer',
+  transition: 'opacity 0.2s ease',
 };
 
 const headerStyle: React.CSSProperties = {
@@ -87,10 +89,11 @@ const dateStyle: React.CSSProperties = {
   color: colors.textSecondary,
 };
 
-const textStyle: React.CSSProperties = {
+const asuntoStyle: React.CSSProperties = {
   ...typography.body,
   margin: `${spacing.sm}px 0 0`,
   lineHeight: 1.5,
+  fontWeight: 600,
   whiteSpace: 'pre-wrap',
 };
 
@@ -104,10 +107,85 @@ const emptyStyle: React.CSSProperties = {
   padding: spacing.xl,
 };
 
+const detailOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 100,
+};
+
+const detailCardStyle: React.CSSProperties = {
+  background: colors.surface,
+  borderRadius: borderRadius.lg,
+  padding: spacing.xl,
+  border: `1px solid ${colors.border}`,
+  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+  maxWidth: 500,
+  width: '90%',
+  maxHeight: '90vh',
+  overflowY: 'auto',
+};
+
+const detailHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  gap: spacing.md,
+  marginBottom: spacing.md,
+};
+
+const closeButtonStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: colors.textSecondary,
+  fontSize: 24,
+  cursor: 'pointer',
+  lineHeight: 1,
+  padding: 0,
+};
+
+const detailTitleStyle: React.CSSProperties = {
+  ...typography.h2,
+  margin: 0,
+};
+
+const detailMetaStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: spacing.xs,
+  marginBottom: spacing.lg,
+};
+
+const detailMetaRowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  fontSize: 14,
+  color: colors.textSecondary,
+};
+
+const detailLabelStyle: React.CSSProperties = {
+  color: colors.primary,
+  fontWeight: 600,
+};
+
+const detailTextStyle: React.CSSProperties = {
+  ...typography.body,
+  margin: 0,
+  lineHeight: 1.6,
+  whiteSpace: 'pre-wrap',
+};
+
 const BuzonLogScreen: React.FC = () => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<BuzonMessage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMessage, setSelectedMessage] = useState<BuzonMessage | null>(null);
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -125,12 +203,53 @@ const BuzonLogScreen: React.FC = () => {
 
   if (loading) return <Loading fullScreen />;
 
+  // Si hay un mensaje seleccionado, mostrar el detalle
+  if (selectedMessage) {
+    return (
+      <div style={detailOverlayStyle}>
+        <div style={detailCardStyle}>
+          <div style={detailHeaderStyle}>
+            <div>
+              <h1 style={detailTitleStyle}>Buzón</h1>
+            </div>
+            <button
+              style={closeButtonStyle}
+              onClick={() => setSelectedMessage(null)}
+            >
+              ✕
+            </button>
+          </div>
+          <div style={detailMetaStyle}>
+            <div style={detailMetaRowStyle}>
+              <span style={detailLabelStyle}>Usuario:</span>
+              <span>{selectedMessage.userName}</span>
+            </div>
+            <div style={detailMetaRowStyle}>
+              <span style={detailLabelStyle}>Asunto:</span>
+              <span>{selectedMessage.asunto}</span>
+            </div>
+            <div style={detailMetaRowStyle}>
+              <span style={detailLabelStyle}>Fecha:</span>
+              <span>
+                {selectedMessage.createdAt.toLocaleDateString('es-ES')} {selectedMessage.createdAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+          </div>
+          <div style={{ marginTop: spacing.md }}>
+            <h3 style={sectionTitleStyle}>Mensaje</h3>
+            <p style={detailTextStyle}>{selectedMessage.text}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={pageStyle}>
       <div style={topBarStyle}>
-        <button style={backButtonStyle} onClick={() => navigate('/admin')}>&lt;</button>
+        <button style={backButtonStyle} onClick={() => navigate('/admin')}>{ '<' }</button>
         <div>
-          <h1 style={titleStyle}>Buzón de la asociación</h1>
+          <h1 style={titleStyle}>Buzón</h1>
         </div>
       </div>
       <div style={contentStyle}>
@@ -143,14 +262,18 @@ const BuzonLogScreen: React.FC = () => {
         ) : (
           <div style={listStyle}>
             {messages.map((msg) => (
-              <div key={msg.id} style={cardStyle}>
+              <div
+                key={msg.id}
+                style={cardStyle}
+                onClick={() => setSelectedMessage(msg)}
+              >
                 <div style={headerStyle}>
                   <span style={userNameStyle}>{msg.userName}</span>
                   <span style={dateStyle}>
                     {msg.createdAt.toLocaleDateString('es-ES')} {msg.createdAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <p style={textStyle}>{msg.text}</p>
+                <p style={asuntoStyle}>{msg.asunto}</p>
               </div>
             ))}
           </div>
