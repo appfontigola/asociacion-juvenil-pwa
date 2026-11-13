@@ -175,8 +175,11 @@ const BuzonScreen: React.FC = () => {
       </div>
       <div style={contentStyle}>
         <h3 style={sectionTitleStyle}>Envíanos un mensaje</h3>
-        <p style={{ color: colors.textSecondary, fontSize: 14, margin: 0 }}>
-          Escribe tu consulta, sugerencia o incidencia. Te responderemos lo antes posible.
+        <p style={{ color: colors.text, fontSize: 15, margin: 0, fontWeight: 600 }}>
+          Cuéntanos qué se te pasa por la cabeza. Propuestas, quejas, ideas para actividades...
+        </p>
+        <p style={{ color: colors.textSecondary, fontSize: 11, margin: 0 }}>
+          (incluso agradecimientos al desarrollador de la app..)
         </p>
         <form onSubmit={handleSend} style={formStyle}>
           <input
