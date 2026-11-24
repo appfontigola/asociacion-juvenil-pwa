@@ -72,11 +72,16 @@ const CreateNoticeScreen: React.FC = () => {
         authorName: user.displayName,
         authorPhotoURL: user.photoURL,
       });
-      sendPushNotification(
-        title.trim(),
-        description.trim().slice(0, 100) + (description.trim().length > 100 ? '...' : ''),
-        '/asociacion-juvenil-pwa/notices'
-      ).catch(() => {});
+      try {
+        await sendPushNotification(
+          title.trim(),
+          description.trim().slice(0, 100) + (description.trim().length > 100 ? '...' : ''),
+          '/asociacion-juvenil-pwa/notices'
+        );
+      } catch (err) {
+        console.error('Error enviando push notification:', err);
+        alert('El aviso se ha creado, pero no se ha podido enviar la notificación push.');
+      }
       navigate('/notices');
     } catch {
       window.alert('Error al crear el aviso');
