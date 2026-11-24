@@ -10,9 +10,9 @@ let firebaseError: string | null = null;
 
 if (!admin.apps.length) {
   try {
-    const raw = process.env.FIREBASE_SERVICE_ACCOUNT || '';
-    if (!raw || raw.trim() === '') {
-      firebaseError = 'FIREBASE_SERVICE_ACCOUNT está vacía';
+    const raw: string = process.env.FIREBASE_SERVICE_ACCOUNT ?? '';
+    if (!raw.trim()) {
+      firebaseError = 'FIREBASE_SERVICE_ACCOUNT está vacía o no está definida';
     } else {
       const serviceAccount = JSON.parse(raw);
       admin.initializeApp({
