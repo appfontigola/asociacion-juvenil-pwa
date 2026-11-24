@@ -12,7 +12,8 @@ import EventCard from '../../components/calendar/EventCard';
 
 const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const DAY_HEADERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-const DOT_COLORS = [colors.primary, colors.secondary, colors.accent, colors.warning];
+const DOT_COLOR_DEFAULT = '#4E8ABC'; // azul por defecto
+const DOT_COLOR_SERGIO = colors.primary; // naranja para Sergio
 
 const getDaysInMonth = (year: number, month: number): number =>
   new Date(year, month + 1, 0).getDate();
@@ -306,12 +307,12 @@ const CalendarScreen: React.FC = () => {
           <span>{day}</span>
           {dots.length > 0 && (
             <div style={dotRowStyle}>
-              {dots.map((_, idx) => (
+              {dots.map((ev) => (
                 <div
-                  key={idx}
+                  key={ev.id}
                   style={{
                     ...dotStyle,
-                    backgroundColor: DOT_COLORS[idx % DOT_COLORS.length],
+                    backgroundColor: ev.authorName === 'Sergio' ? DOT_COLOR_SERGIO : DOT_COLOR_DEFAULT,
                   }}
                 />
               ))}

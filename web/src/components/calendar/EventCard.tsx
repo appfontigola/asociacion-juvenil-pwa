@@ -8,15 +8,15 @@ interface EventCardProps {
   onPress: () => void;
 }
 
-const cardStyle: React.CSSProperties = {
-  background: gradients.cardOrange,
+const cardStyle = (isSergio: boolean): React.CSSProperties => ({
+  background: isSergio ? gradients.cardOrange : gradients.card,
   borderRadius: borderRadius.lg,
   padding: spacing.md,
   cursor: 'pointer',
   transition: 'opacity 0.2s ease',
-  border: '1px solid rgba(255, 114, 35, 0.3)',
+  border: `1px solid ${isSergio ? 'rgba(255, 114, 35, 0.3)' : 'rgba(78, 138, 188, 0.3)'}`,
   boxShadow: '0 4px 14px rgba(0, 0, 0, 0.3)',
-};
+});
 
 const titleStyle: React.CSSProperties = {
   ...typography.body,
@@ -31,9 +31,10 @@ const detailStyle: React.CSSProperties = {
 };
 
 const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
+  const isSergio = event.authorName === 'Sergio';
   return (
     <div
-      style={cardStyle}
+      style={cardStyle(isSergio)}
       onClick={onPress}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.opacity = '0.85';
