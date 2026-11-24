@@ -7,21 +7,35 @@ const VAPID_PRIVATE_KEY = 'KFWNupFphL5lHJXIkvuy5ftvQT0PtBxKAxzRe8blxnM';
 const VAPID_SUBJECT = 'mailto:admin@fontigola.com';
 
 if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  } catch (err) {
+    console.error('Firebase Admin init error:', err);
+  }
 }
 
 webPush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // Health check: GET /api/send-push
+  if (req.method === 'GET') {
+    const firebaseReady = !!admin.apps.length;
+    return res.status(200).json({
+      status: 'ok',
+      firebase: firebaseReady ? 'initialized' : 'not initialized',
+      timestamp: new Date().toISOString(),
+    });
   }
 
   if (req.method !== 'POST') {
@@ -33,6 +47,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Missing title or body' });
   }
 
+  if (!admin.apps.length) {
+    return res.status(500).json({ error: 'Firebase Admin not initialized. Check FIREBASE_SERVICE_ACCOUNT env var.' });
+  }
+
   try {
     const db = admin.firestore();
     const snapshot = await db.collection('pushSubscriptions').get();
@@ -41,12 +59,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let success = 0;
     let failed = 0;
 
-    const results = await Promise.allSettled(
+    await Promise.allSettled(
       subscriptions.map(async (sub) => {
         try {
           await webPush.sendNotification(
             { endpoint: sub.endpoint, keys: sub.keys },
-            JSON.stringify({ title, body, url: url ? (url.startsWith('/') ? '/asociacion-juvenil-pwa' + url : url) : '/asociacion-juvenil-pwa/' })
+            JSON.stringify({
+              title,
+              body,
+              url: url ? (url.startsWith('/') ? '/asociacion-juvenil-pwa' + url : url) : '/asociacion-juvenil-pwa/',
+            })
           );
           success++;
         } catch {
@@ -60,6 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json({ success, failed, total: subscriptions.length });
   } catch (err) {
+    console.error('send-push error:', err);
     return res.status(500).json({ error: String(err) });
   }
 }
