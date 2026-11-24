@@ -203,7 +203,7 @@ const HomeScreen: React.FC = () => {
           </>
         )}
         <div style={bottomStyle}>
-          {user?.displayName} — v1.0.0
+          AJF
         </div>
       </div>
     </div>
