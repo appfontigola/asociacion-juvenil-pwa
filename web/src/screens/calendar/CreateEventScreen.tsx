@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../../hooks/useEvents';
 import { useAuth } from '../../hooks/useAuth';
 import { colors, spacing, borderRadius, typography } from '../../constants/theme';
+import { formatDate } from '../../utils/helpers';
+import { sendPushNotification } from '../../services/notificationService';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
@@ -95,6 +97,17 @@ const CreateEventScreen: React.FC = () => {
         authorName: user.displayName,
         authorPhotoURL: user.photoURL,
       });
+      try {
+        const fechaFormateada = formatDate(eventDate);
+        await sendPushNotification(
+          'Nueva actividad',
+          `${fechaFormateada} - ${title.trim()}`,
+          '/calendar'
+        );
+      } catch {
+        // Si falla la notificación push, no impedimos que el evento se guarde
+        console.error('Error enviando notificación push de nueva actividad');
+      }
       navigate('/calendar');
     } catch {
       window.alert('Error al crear el evento');
