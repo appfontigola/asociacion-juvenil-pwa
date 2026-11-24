@@ -1,31 +1,39 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as admin from 'firebase-admin';
-import webPush from 'web-push';
 
 const VAPID_PUBLIC_KEY = 'BMkWPF3_4FrjVQ1iY9tua6bZ0_8hcZmSxLKQ6yjrXJX1v6En9b_rwqD4H_cE0qPDD4xuJfm952h9V1iF7C_pClQ';
 const VAPID_PRIVATE_KEY = 'KFWNupFphL5lHJXIkvuy5ftvQT0PtBxKAxzRe8blxnM';
 const VAPID_SUBJECT = 'mailto:admin@fontigola.com';
 
 let firebaseError: string | null = null;
+let admin: any = null;
+let webPush: any = null;
 
-if (!admin.apps.length) {
-  try {
+try {
+  const adminModule = await import('firebase-admin');
+  admin = adminModule.default ?? adminModule;
+  if (!admin.apps.length) {
     const raw: string = process.env.FIREBASE_SERVICE_ACCOUNT ?? '';
     if (!raw.trim()) {
-      firebaseError = 'FIREBASE_SERVICE_ACCOUNT está vacía o no está definida';
+      firebaseError = 'FIREBASE_SERVICE_ACCOUNT está vacía o no está definida en Vercel';
     } else {
       const serviceAccount = JSON.parse(raw);
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       });
     }
-  } catch (err: any) {
-    firebaseError = err.message || 'Error inicializando Firebase Admin';
-    console.error('Firebase init error:', firebaseError);
   }
+} catch (err: any) {
+  firebaseError = err.message || 'Error cargando firebase-admin';
+  console.error('Firebase init error:', firebaseError);
 }
 
-webPush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+try {
+  const wpModule = await import('web-push');
+  webPush = wpModule.default ?? wpModule;
+  webPush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+} catch (err: any) {
+  console.error('web-push init error:', err.message);
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,6 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({
       status: 'ok',
       firebase: firebaseError ? `error: ${firebaseError}` : 'initialized',
+      webpush: webPush ? 'ok' : 'not loaded',
       timestamp: new Date().toISOString(),
     });
   }
@@ -49,8 +58,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (firebaseError) {
-    return res.status(500).json({ error: firebaseError });
+  if (firebaseError || !admin) {
+    return res.status(500).json({ error: firebaseError || 'Firebase Admin no disponible' });
   }
 
   const { title, body, url } = req.body || {};
