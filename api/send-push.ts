@@ -6,14 +6,22 @@ const VAPID_PUBLIC_KEY = 'BMkWPF3_4FrjVQ1iY9tua6bZ0_8hcZmSxLKQ6yjrXJX1v6En9b_rwq
 const VAPID_PRIVATE_KEY = 'KFWNupFphL5lHJXIkvuy5ftvQT0PtBxKAxzRe8blxnM';
 const VAPID_SUBJECT = 'mailto:admin@fontigola.com';
 
+let firebaseError: string | null = null;
+
 if (!admin.apps.length) {
   try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-  } catch (err) {
-    console.error('Firebase Admin init error:', err);
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT || '';
+    if (!raw || raw.trim() === '') {
+      firebaseError = 'FIREBASE_SERVICE_ACCOUNT está vacía';
+    } else {
+      const serviceAccount = JSON.parse(raw);
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    }
+  } catch (err: any) {
+    firebaseError = err.message || 'Error inicializando Firebase Admin';
+    console.error('Firebase init error:', firebaseError);
   }
 }
 
@@ -28,12 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  // Health check: GET /api/send-push
+  // Health check
   if (req.method === 'GET') {
-    const firebaseReady = !!admin.apps.length;
     return res.status(200).json({
       status: 'ok',
-      firebase: firebaseReady ? 'initialized' : 'not initialized',
+      firebase: firebaseError ? `error: ${firebaseError}` : 'initialized',
       timestamp: new Date().toISOString(),
     });
   }
@@ -42,13 +49,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  if (firebaseError) {
+    return res.status(500).json({ error: firebaseError });
+  }
+
   const { title, body, url } = req.body || {};
   if (!title || !body) {
     return res.status(400).json({ error: 'Missing title or body' });
-  }
-
-  if (!admin.apps.length) {
-    return res.status(500).json({ error: 'Firebase Admin not initialized. Check FIREBASE_SERVICE_ACCOUNT env var.' });
   }
 
   try {
@@ -81,8 +88,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     );
 
     return res.status(200).json({ success, failed, total: subscriptions.length });
-  } catch (err) {
+  } catch (err: any) {
     console.error('send-push error:', err);
-    return res.status(500).json({ error: String(err) });
+    return res.status(500).json({ error: err.message || 'Error interno' });
   }
 }
